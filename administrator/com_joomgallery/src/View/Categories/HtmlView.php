@@ -42,11 +42,19 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
+    $this->component->addLog('[' . STOPWATCH_ID . '] BackendCategories::display(): ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
     $this->state         = $this->get('State');
-    $this->items         = $this->get('Items');		
+    $this->items         = $this->get('Items');
+
+    $this->component->addLog('[' . STOPWATCH_ID . '] # Category items loaded: ' . \count($this->items), 128, 'stopwatch');
+    $this->component->addLog('[' . STOPWATCH_ID . '] Category items loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
 		$this->pagination    = $this->get('Pagination');
 		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
+
+    $this->component->addLog('[' . STOPWATCH_ID . '] Pagination loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
 		// Check for errors.
 		if(count($errors = $this->get('Errors')))
@@ -64,6 +72,7 @@ class HtmlView extends JoomGalleryView
 
 		$this->sidebar = Sidebar::render();
 		parent::display($tpl);
+    $this->component->addLog('[' . STOPWATCH_ID . '] View displayed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 	}
 
   /**

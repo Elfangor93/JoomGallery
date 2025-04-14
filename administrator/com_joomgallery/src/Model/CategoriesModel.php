@@ -381,6 +381,8 @@ class CategoriesModel extends JoomListModel
       $query->order($db->escape($this->state->get('list.fullordering', 'a.lft ASC')));
     }
 
+    $this->component->addLog('[' . STOPWATCH_ID . '] Query: ' . $query->__toString(), 128, 'stopwatch');
+
 		return $query;
 	}
 
