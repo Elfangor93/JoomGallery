@@ -142,6 +142,8 @@ class JoomgalleryComponent extends MVCComponent implements BootableExtensionInte
     {
       $this->version = (string) $this->xml->version;
     }
+    
+    $this->addLog('[' . STOPWATCH_ID . '] Boot JoomGallery component: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
   }
 
   /**

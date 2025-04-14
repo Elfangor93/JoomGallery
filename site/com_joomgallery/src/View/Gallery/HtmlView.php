@@ -51,14 +51,20 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
+    $this->component->addLog('[' . STOPWATCH_ID . '] Gallery::display(): ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
 		$this->state  = $this->get('State');
 		$this->params = $this->get('Params');
 		$this->item   = $this->get('Item');
+
+    $this->component->addLog('[' . STOPWATCH_ID . '] Gallery item loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
     // Load images
     $this->item->images = new \stdClass();
     $this->item->images->items      = $this->get('Images');
     $this->item->images->pagination = $this->get('ImagesPagination');
+
+    $this->component->addLog('[' . STOPWATCH_ID . '] Images loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
     // Check for errors.
     if(\count($errors = $this->get('Errors')))
@@ -69,6 +75,7 @@ class HtmlView extends JoomGalleryView
     $this->_prepareDocument();
 
     parent::display($tpl);
+    $this->component->addLog('[' . STOPWATCH_ID . '] View displayed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
   }
 
   /**

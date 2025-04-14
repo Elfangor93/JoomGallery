@@ -35,6 +35,8 @@ class RawView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
+    $this->component->addLog('[' . STOPWATCH_ID . '] RawImage::display(): ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
     // Get request variables
     $type  = $this->app->input->get('type', 'thumbnail', 'word');
     $id    = $this->app->input->get('id', 0);
@@ -45,6 +47,8 @@ class RawView extends JoomGalleryView
     {
       $this->app->redirect(Route::_('index.php', false), 403);
     }
+
+    $this->component->addLog('[' . STOPWATCH_ID . '] RawImage access checked: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
     // Choose the filesystem adapter
     $adapter = '';
@@ -65,6 +69,8 @@ class RawView extends JoomGalleryView
     $img_obj ? $img = $img_obj : $img = $id;
     $img_path = JoomHelper::getImg($img, $type, false, false);
 
+    $this->component->addLog('[' . STOPWATCH_ID . '] RawImage path received: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
     // Create filesystem service    
     $this->component->createFilesystem($adapter);
 
@@ -79,6 +85,8 @@ class RawView extends JoomGalleryView
       $this->app->redirect(Route::_('index.php', false), 404);
     }
 
+    $this->component->addLog('[' . STOPWATCH_ID . '] RawImage resource received: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
     // Create config service
     $this->component->createConfig('com_joomgallery.image', $id);
 
@@ -86,7 +94,9 @@ class RawView extends JoomGalleryView
     if(!$this->ppImage($file_info, $resource, $type))
     {
       $this->app->redirect(Route::_('index.php', false), 404);
-    }    
+    }
+
+    $this->component->addLog('[' . STOPWATCH_ID . '] RawImage image postprocessed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
     // Set mime encoding
     $this->getDocument()->setMimeEncoding($file_info->mime_type);
@@ -99,6 +109,7 @@ class RawView extends JoomGalleryView
 
     \ob_end_clean(); //required here or large files will not work
     \fpassthru($resource);
+    $this->component->addLog('[' . STOPWATCH_ID . '] RawImage displayed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
   }
 
   /**
