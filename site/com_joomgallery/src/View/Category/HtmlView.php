@@ -103,8 +103,9 @@ class HtmlView extends JoomGalleryView
 			// Load subcategories
 			$this->item->children = new \stdClass();
 			$this->item->children->items         = $this->get('Children');
+			$this->component->addLog('[' . STOPWATCH_ID . '] Category subcategories items loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 			$this->item->children->pagination    = $this->get('ChildrenPagination');
-      $this->component->addLog('[' . STOPWATCH_ID . '] Category subcategories loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+      $this->component->addLog('[' . STOPWATCH_ID . '] Category subcategories pagination loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
 			// Load images
 			$this->item->images = new \stdClass();

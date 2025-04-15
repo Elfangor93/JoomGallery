@@ -168,6 +168,35 @@ abstract class JoomListModel extends ListModel
   }
 
   /**
+     * Method to get an array of data items.
+     *
+     * @return  mixed  An array of data items on success, false on failure.
+     *
+     * @since   1.6
+     */
+    public function getItems()
+    {
+        // Get a storage key.
+        $store = $this->getStoreId();
+
+        // Try to load the data from internal storage.
+        if (isset($this->cache[$store])) {
+            return $this->cache[$store];
+        }
+
+        try {
+            // Load the list items and add the items to the internal cache.
+            $this->cache[$store] = $this->_getList($this->_getListQuery(), $this->getStart(), $this->getState('list.limit'));
+        } catch (\RuntimeException $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        return $this->cache[$store];
+    }
+
+  /**
      * Gets an array of objects from the results of database query.
      *
      * @param   DatabaseQuery|string   $query       The query.
