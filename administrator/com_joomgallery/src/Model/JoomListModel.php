@@ -166,4 +166,34 @@ abstract class JoomListModel extends ListModel
 
     return $table;
   }
+
+  /**
+     * Gets an array of objects from the results of database query.
+     *
+     * @param   DatabaseQuery|string   $query       The query.
+     * @param   integer                $limitstart  Offset.
+     * @param   integer                $limit       The number of records.
+     *
+     * @return  object[]  An array of results.
+     *
+     * @since   3.0
+     * @throws  \RuntimeException
+     */
+    protected function _getList($query, $limitstart = 0, $limit = 0)
+    {
+        if (\is_string($query)) {
+            $query = $this->getDatabase()->getQuery(true)->setQuery($query);
+        }
+
+        $query->setLimit($limit, $limitstart);
+
+        $this->component->addLog('[' . STOPWATCH_ID . '] Query: ' . $query->__toString(), 128, 'stopwatch');
+
+        $this->getDatabase()->setQuery($query);
+        $list = $this->getDatabase()->loadObjectList();
+
+        $this->component->addLog('[' . STOPWATCH_ID . '] Query executed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
+        return $list;
+    }
 }
