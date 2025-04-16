@@ -18,6 +18,8 @@ use \Joomla\CMS\MVC\Model\ListModel;
 use \Joomla\CMS\User\CurrentUserInterface;
 use \Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface;
 
+use \Joomla\CMS\Pagination\Pagination;
+
 /**
  * Base model class for JoomGallery list of items
  *
