@@ -196,33 +196,98 @@ abstract class JoomListModel extends ListModel
         return $this->cache[$store];
     }
 
-  /**
-     * Gets an array of objects from the results of database query.
+    /**
+     * Method to get a \JPagination object for the data set.
      *
-     * @param   DatabaseQuery|string   $query       The query.
-     * @param   integer                $limitstart  Offset.
-     * @param   integer                $limit       The number of records.
+     * @return  Pagination  A Pagination object for the data set.
      *
-     * @return  object[]  An array of results.
-     *
-     * @since   3.0
-     * @throws  \RuntimeException
+     * @since   1.6
      */
-    protected function _getList($query, $limitstart = 0, $limit = 0)
+    public function getPagination()
     {
-        if (\is_string($query)) {
-            $query = $this->getDatabase()->getQuery(true)->setQuery($query);
+        // Get a storage key.
+        $store = $this->getStoreId('getPagination');
+
+        // Try to load the data from internal storage.
+        if (isset($this->cache[$store])) {
+            return $this->cache[$store];
         }
 
-        $query->setLimit($limit, $limitstart);
+        $limit = (int) $this->getState('list.limit') - (int) $this->getState('list.links');
 
+        $total = $this->getTotal();
+        $this->component->addLog('[' . STOPWATCH_ID . '] Pagination getTotal(): ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
+        $start = $this->getStart();
+        $this->component->addLog('[' . STOPWATCH_ID . '] Pagination getStart(): ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
+        // Create the pagination object and add the object to the internal cache.
+        $this->cache[$store] = new Pagination($total, $start, $limit);
+        $this->component->addLog('[' . STOPWATCH_ID . '] Initialise pagination: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
+        return $this->cache[$store];
+    }
+
+    /**
+     * Returns a record count for the query.
+     *
+     * Note: Current implementation of this method assumes that getListQuery() returns a set of unique rows,
+     * thus it uses SELECT COUNT(*) to count the rows. In cases that getListQuery() uses DISTINCT
+     * then either this method must be overridden by a custom implementation at the derived Model Class
+     * or a GROUP BY clause should be used to make the set unique.
+     *
+     * @param   DatabaseQuery|string  $query  The query.
+     *
+     * @return  integer  Number of rows for query.
+     *
+     * @since   3.0
+     */
+    protected function _getListCount($query)
+    {
+        // Use fast COUNT(*) on DatabaseQuery objects if there is no GROUP BY or HAVING clause:
+        if (
+            $query instanceof DatabaseQuery
+            && $query->type === 'select'
+            && $query->group === null
+            && $query->merge === null
+            && $query->querySet === null
+            && $query->having === null
+        ) {
+            $query = clone $query;
+            $query->clear('select')->clear('order')->clear('limit')->clear('offset')->select('COUNT(*)');
+
+            $this->component->addLog('[' . STOPWATCH_ID . '] Use COUNT(*) on DatabaseQuery objects.', 128, 'stopwatch');
+            $this->component->addLog('[' . STOPWATCH_ID . '] Query: ' . $query->__toString(), 128, 'stopwatch');
+
+            $this->getDatabase()->setQuery($query);
+
+            $res = (int) $this->getDatabase()->loadResult();
+
+            $this->component->addLog('[' . STOPWATCH_ID . '] ListCount-Query executed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
+            return $res;
+        }
+
+        // Otherwise fall back to inefficient way of counting all results.
+
+        // Remove the limit, offset and order parts if it's a DatabaseQuery object
+        if ($query instanceof DatabaseQuery) {
+            $query = clone $query;
+            $query->clear('limit')->clear('offset')->clear('order');
+        }
+
+        $this->component->addLog('[' . STOPWATCH_ID . '] Count the result of the query.', 128, 'stopwatch');
         $this->component->addLog('[' . STOPWATCH_ID . '] Query: ' . $query->__toString(), 128, 'stopwatch');
 
         $this->getDatabase()->setQuery($query);
-        $list = $this->getDatabase()->loadObjectList();
+        $this->getDatabase()->execute();
 
-        $this->component->addLog('[' . STOPWATCH_ID . '] Query executed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+        $this->component->addLog('[' . STOPWATCH_ID . '] ListCount-Query executed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
-        return $list;
+        $num = (int) $this->getDatabase()->getNumRows();
+
+        $this->component->addLog('[' . STOPWATCH_ID . '] Rows counted: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
+        return $num;
     }
 }

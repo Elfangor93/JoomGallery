@@ -110,10 +110,11 @@ class HtmlView extends JoomGalleryView
 			// Load images
 			$this->item->images = new \stdClass();
 			$this->item->images->items         = $this->get('Images');
+			$this->component->addLog('[' . STOPWATCH_ID . '] Category images loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 			$this->item->images->pagination    = $this->get('ImagesPagination');
+			$this->component->addLog('[' . STOPWATCH_ID . '] Category images pagination loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 			$this->item->images->filterForm    = $this->get('ImagesFilterForm');
 			$this->item->images->activeFilters = $this->get('ImagesActiveFilters');
-      $this->component->addLog('[' . STOPWATCH_ID . '] Category images loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 		}
 
     // Check for errors.
