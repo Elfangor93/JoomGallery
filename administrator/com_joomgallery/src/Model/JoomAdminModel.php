@@ -420,6 +420,9 @@ abstract class JoomAdminModel extends AdminModel
     // Load the configs from config service
     $id = ($id === 0) ? null : $id;
 
+    $this->component->addLog('JoomAdminModel::loadComponentParams(id='.$id.')', 128, 'config');
+    $this->component->addLog('context: '_JOOM_OPTION.'.'.$this->type.'.'.$id, 128, 'config');
+
 		$this->component->createConfig(_JOOM_OPTION.'.'.$this->type, $id, true);
 		$configArray = $this->component->getConfig()->getProperties();
 		$configs     = new Registry($configArray);
