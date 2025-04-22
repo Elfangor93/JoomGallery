@@ -61,6 +61,9 @@ class DefaultConfig extends Config implements ConfigInterface
     
     $context_array = \explode('.', $context);
 
+    $this->component->addLog('Config service storeId property:', 128, 'config');
+    $this->component->addLog(\var_export($this->ids, true), 128, 'config');
+
     //-----Level 1: Global Config-----
 
     // Get global configuration set
@@ -70,6 +73,7 @@ class DefaultConfig extends Config implements ConfigInterface
     {
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error');
       $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error', 'jerror');
+      $this->component->addLog('Error load global configuration.', 128, 'config');
 
       return;
     }
@@ -106,6 +110,7 @@ class DefaultConfig extends Config implements ConfigInterface
       {
         $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error');
         $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error', 'jerror');
+        $this->component->addLog('Error load configuration from category.', 128, 'config');
 
         return;
       }
@@ -136,6 +141,7 @@ class DefaultConfig extends Config implements ConfigInterface
       {
         $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error');
         $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error', 'jerror');
+        $this->component->addLog('Error load configuration from image.', 128, 'config');
 
         return;
       }
@@ -163,6 +169,7 @@ class DefaultConfig extends Config implements ConfigInterface
       {
         $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error');
         $this->component->addLog(Text::_('COM_JOOMGALLERY_SERVICE_ERROR_LOAD_CONFIG'), 'error', 'jerror');
+        $this->component->addLog('Error load configuration from menu item.', 128, 'config');
 
         return;
       }
