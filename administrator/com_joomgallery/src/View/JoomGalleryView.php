@@ -106,6 +106,10 @@ class JoomGalleryView extends BaseHtmlView
       // The option unicodeslugs is activated.
       $this->app->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_UNICODESLUGS'), 'warning');
     }
+
+    $input = $this->app->input;
+    $this->component->addLog('[' . STOPWATCH_ID . '] Option: '.$input->get('option').', View: '.$input->get('view').', Format: '.$input->get('format', 'html'), 128, 'stopwatch');
+    $this->component->addLog('[' . STOPWATCH_ID . '] Construct View class: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
   }
 
   /**

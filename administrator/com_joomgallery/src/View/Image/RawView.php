@@ -86,7 +86,7 @@ class RawView extends JoomGalleryView
     if(!$this->ppImage($file_info, $resource, $type))
     {
       $this->app->redirect(Route::_('index.php', false), 404);
-    }    
+    }
 
     // Set mime encoding
     $this->getDocument()->setMimeEncoding($file_info->mime_type);

@@ -22,6 +22,9 @@ use Joomla\CMS\Event\Model\AfterCleanCacheEvent;
 use Joomla\CMS\Event\Result\ResultAwareInterface;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
+
 /**
  * System plugin integrating JoomGallery into the CMS core
  *
@@ -103,6 +106,7 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     if(self::$jg_exists)
     {
       return [
+        'onAfterInitialise'    => ['onAfterInitialise', Priority::MAX],
         'onContentCleanCache'  => ['onContentCleanCache', Priority::NORMAL],
         'onContentPrepareForm' => ['onContentPrepareForm', Priority::NORMAL],
         'onContentPrepareData' => ['onContentPrepareData', Priority::NORMAL],
@@ -114,6 +118,15 @@ final class Joomgallery extends CMSPlugin implements SubscriberInterface
     {
       return array();
     }
+  }
+
+  public function onAfterInitialise()
+  {
+    // Start the stopwatch
+    define('STOPWATCH_START', microtime(true));
+    define('STOPWATCH_ID', rand(1111, 9999));
+    Log::addLogger(['text_file' =>  'com_joomgallery.stopwatch.log.php'], Log::ALL, ['com_joomgallery.stopwatch']);
+    Log::add('[' . STOPWATCH_ID . '] onAfterInitialise: 0', Log::DEBUG, 'com_joomgallery.stopwatch');
   }
 
   /**

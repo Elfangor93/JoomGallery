@@ -59,6 +59,8 @@ class HtmlView extends JoomGalleryView
 	 */
 	public function display($tpl = null)
 	{
+    $this->component->addLog('[' . STOPWATCH_ID . '] Category::display(): ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
     // Current category item
 		$this->state  = $this->get('State');
 		$this->params = $this->get('Params');
@@ -72,6 +74,8 @@ class HtmlView extends JoomGalleryView
 		{
 			$loaded = false;
 		}
+
+    $this->component->addLog('[' . STOPWATCH_ID . '] Category item loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
 		// Check published state
 		if($loaded && $this->item->published !== 1) 
@@ -87,21 +91,28 @@ class HtmlView extends JoomGalleryView
 			return;
     }
 
+    $this->component->addLog('[' . STOPWATCH_ID . '] Category access checked: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
+
 		// Load only if category is currently not protected
 		if(!$this->item->pw_protected)
 		{
 			// Load parent category
 			$this->item->parent = $this->get('Parent');
+      $this->component->addLog('[' . STOPWATCH_ID . '] Category parent loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
 			// Load subcategories
 			$this->item->children = new \stdClass();
 			$this->item->children->items         = $this->get('Children');
+			$this->component->addLog('[' . STOPWATCH_ID . '] Category subcategories items loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 			$this->item->children->pagination    = $this->get('ChildrenPagination');
+      $this->component->addLog('[' . STOPWATCH_ID . '] Category subcategories pagination loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 
 			// Load images
 			$this->item->images = new \stdClass();
 			$this->item->images->items         = $this->get('Images');
+			$this->component->addLog('[' . STOPWATCH_ID . '] Category images loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 			$this->item->images->pagination    = $this->get('ImagesPagination');
+			$this->component->addLog('[' . STOPWATCH_ID . '] Category images pagination loaded: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 			$this->item->images->filterForm    = $this->get('ImagesFilterForm');
 			$this->item->images->activeFilters = $this->get('ImagesActiveFilters');
 		}
@@ -115,6 +126,7 @@ class HtmlView extends JoomGalleryView
 		$this->_prepareDocument();
 
 		parent::display($tpl);
+    $this->component->addLog('[' . STOPWATCH_ID . '] View displayed: ' . \strval(microtime(true) - STOPWATCH_START), 128, 'stopwatch');
 	}
 
 	/**
