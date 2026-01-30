@@ -145,13 +145,12 @@ class UsercategoryController extends JoomFormController // FormController
     $returnPage = base64_encode($this->getReturnPage('usercategories'));
     $baseLink   = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
       . (int) $data['id'] . '&return=' . $returnPage;
-    $backLink   = Route::_($baseLink, false);
 
     // Access check
     if(!$this->acl->checkACL('edit', 'category', $recordId))
     {
       $this->setMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'error');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
@@ -203,7 +202,7 @@ class UsercategoryController extends JoomFormController // FormController
       $app->setUserState('com_joomgallery.edit.category.data', $data);
 
       // Redirect back to the edit screen.
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       $this->redirect();
     }
@@ -216,7 +215,7 @@ class UsercategoryController extends JoomFormController // FormController
 
       // Redirect back to the edit screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_SAVE_FAILED', $model->getError()), 'warning');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
@@ -228,7 +227,6 @@ class UsercategoryController extends JoomFormController // FormController
       $newId    = $model->getState('usercategory.id', '');
       $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id='
         . (int) $newId . '&return=' . $returnPage;
-      $backLink = Route::_($baseLink, false);
     }
 
     // new backlink after save to new (empty)
@@ -236,7 +234,6 @@ class UsercategoryController extends JoomFormController // FormController
     {
       $baseLink = 'index.php?option=com_joomgallery&view=usercategory&layout=editCat&id=0'
         . '&return=' . $returnPage;
-      $backLink = Route::_($baseLink, false);
     }
 
     // Check in the profile.
@@ -247,7 +244,7 @@ class UsercategoryController extends JoomFormController // FormController
 
       // Redirect to list screen.
       $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_CHECKIN_FAILED', $model->getError()), 'warning');
-      $this->setRedirect($backLink);
+      $this->setRedirect(Route::_($baseLink, false));
 
       return false;
     }
@@ -258,7 +255,7 @@ class UsercategoryController extends JoomFormController // FormController
 
     // Redirect to the list screen.
     $this->setMessage(Text::_('COM_JOOMGALLERY_ITEM_SAVE_SUCCESSFUL'));
-    $this->setRedirect($backLink);
+    $this->setRedirect(Route::_($baseLink, false));
 
     return true;
   }
