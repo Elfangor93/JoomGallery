@@ -815,7 +815,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
     $listOrder = $data->state->get('list.ordering');
     $listDirn  = $data->state->get('list.direction');
     $canOrder  = $data->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 1, true);
-    $saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
+    $saveOrder = ($listOrder == 'a.ordering');
 
     $saveOrderingUrl = '';
 
@@ -865,7 +865,7 @@ $newCategoryView = Route::_('index.php?option=com_joomgallery&view=usercategory&
                   </caption>
                   <thead>
                   <tr>
-                    <?php if($canOrder && $saveOrder && isset($data->items[0]->ordering)): ?>
+                    <?php if($canOrder): ?>
                       <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                         <?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                       </th>
