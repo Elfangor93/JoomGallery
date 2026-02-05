@@ -36,7 +36,7 @@ $isHasAccess = $this->isUserLoggedIn && $this->isUserCoreManager;
 $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.image', 0, 1, true);
-$saveOrder = ($listOrder == 'a.ordering' && strtolower($listDirn) == 'asc');
+$saveOrder = ($listOrder == 'a.ordering');
 
 $config = $this->params['configs'];
 
@@ -170,7 +170,7 @@ $canDelete = false;
                 </caption>
                 <thead>
                 <tr>
-                  <?php if($canOrder && $saveOrder && isset($this->items[0]->ordering)): ?>
+                  <?php if($canOrder): ?>
                     <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                       <?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
                     </th>

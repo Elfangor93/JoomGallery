@@ -33,7 +33,7 @@ $listOrder = $this->state->get('list.ordering');
 $listDirn  = $this->state->get('list.direction');
 $canAdd    = $this->getAcl()->checkACL('add', 'com_joomgallery.category', 0, 1, true);
 $canOrder  = $this->getAcl()->checkACL('editstate', 'com_joomgallery.category');
-$saveOrder = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
+$saveOrder = ($listOrder == 'a.lft');
 
 $config = $this->params['configs'];
 
@@ -162,10 +162,9 @@ $baseLink_ImagesFilter = 'index.php?option=com_joomgallery&view=userimages&filte
                 </caption>
                 <thead>
                 <tr>
-                  <?php if($canOrder && $saveOrder) : ?>
+                  <?php if($canOrder) : ?>
                     <th scope="col" class="w-1 text-center d-none d-md-table-cell">
                       <?php echo HTMLHelper::_('searchtools.sort', '', 'a.lft', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
-
                     </th>
                   <?php else : ?>
                     <th scope="col" class="w-1 d-none d-md-table-cell"></th>

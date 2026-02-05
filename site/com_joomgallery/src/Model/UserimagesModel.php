@@ -33,6 +33,7 @@ class UserimagesModel extends AdminImagesModel
    *
    * @param   string   $ordering   Elements order
    * @param   string   $direction  Order direction
+   * @param   string   $direction  Order direction
    *
    * @return  void
    *
@@ -40,7 +41,7 @@ class UserimagesModel extends AdminImagesModel
    *
    * @since   4.2.0
    */
-  protected function populateState($ordering = 'a.id', $direction = 'DESC'): void
+  protected function populateState($ordering = 'a.ordering', $direction = 'DESC'): void
   {
     // ToDo: use edit.php instead of editImg.php in Tmpl
     // brute force fix part (1) to keep context without addition '.editImg' by layout
