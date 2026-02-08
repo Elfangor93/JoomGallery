@@ -167,7 +167,7 @@ class com_joomgalleryInstallerScript extends InstallerScript
 
     foreach($problemPlugins as $plugin)
     {
-      if(version_compare($jversion[0], $plugin['jversion'], '>='))
+      if(version_compare($jversion[0], $plugin['jversion'], '=='))
       {
         if(!key_exists('problemPlugins', $this->storage))
         {
@@ -180,9 +180,6 @@ class com_joomgalleryInstallerScript extends InstallerScript
           $language->load($plugin['name'], JPATH_ADMINISTRATOR);
 
           Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_ERROR_DEACTIVATE_PLUGIN', $plugin['folder'], Text::_(strtoupper($plugin['name']))), 'error');
-
-          //array_push($this->storage['problemPlugins'], $id);
-          //$this->deactivateExtension($id);
 
           return false;
         }
@@ -202,6 +199,23 @@ class com_joomgalleryInstallerScript extends InstallerScript
       {
         Factory::getApplication()->enqueueMessage(Text::_('COM_JOOMGALLERY_ERROR_READ_XML_FILE'), 'note');
         Log::add(Text::_('COM_JOOMGALLERY_ERROR_READ_XML_FILE'), 8, 'joomgallery');
+      }
+
+      // remove outdated files and folders from JG4 and newer
+      foreach($this->removeJGfolders() as $folder)
+      {
+        if(is_dir(Path::clean($folder)))
+        {
+          Folder::delete(Path::clean($folder));
+        }
+      }
+
+      foreach($this->removeJGfiles() as $file)
+      {
+        if(is_file(Path::clean($file)))
+        {
+          File::delete(Path::clean($file));
+        }
       }
     }
 
@@ -1466,7 +1480,11 @@ class com_joomgalleryInstallerScript extends InstallerScript
   {
     $msg = '';
 
-    if(strpos(end($new_version), 'dev'))
+    if( strpos(end($new_version), 'dev') ||
+        strpos(end($new_version), 'alpha') ||
+        strpos(end($new_version), 'beta') ||
+        strpos(end($new_version), 'rc')
+     )
     {
       // We are dealing with a development version (alpha or beta)
       $msg .= Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION');
@@ -1600,6 +1618,44 @@ class com_joomgalleryInstallerScript extends InstallerScript
     $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions2.rss') . '.spc';
     $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('https://www.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss') . '.spc';
     $files[] = JPATH_ADMINISTRATOR . '/cache/' . md5('https://www.en.joomgalleryfriends.net/components/com_newversion/rss/extensions3.rss') . '.spc';
+
+    return $files;
+  }
+
+  /**
+   * Detect old joomgallery folders (v4.0.0 and newer)
+   *
+   * @return  array|bool   List of folder paths or false if no folders detected
+   */
+  private function removeJGfolders()
+  {
+    $app = Factory::getApplication();
+
+    $folders = [
+      JPATH_ROOT . '/components/com_joomgallery/src/View/Categoryform',
+      JPATH_ROOT . '/components/com_joomgallery/src/View/Imageform',
+      JPATH_ROOT . '/components/com_joomgallery/tmpl/categoryform',
+      JPATH_ROOT . '/components/com_joomgallery/tmpl/imageform',
+    ];
+
+    return $folders;
+  }
+
+  /**
+   * Detect old joomgallery files (v4.0.0 and newer)
+   *
+   * @return  array|bool   List of file paths or false if no files detected
+   */
+  private function removeJGfiles()
+  {
+    $files = [
+      JPATH_ROOT . '/components/com_joomgallery/forms/categoryform.xml',
+      JPATH_ROOT . '/components/com_joomgallery/forms/imageform.xml',
+      JPATH_ROOT . '/components/com_joomgallery/src/Controller/CategoryformController.php',
+      JPATH_ROOT . '/components/com_joomgallery/src/Controller/ImageformController.php',
+      JPATH_ROOT . '/components/com_joomgallery/src/Model/CategoryformModel.php',
+      JPATH_ROOT . '/components/com_joomgallery/src/Model/ImageformModel.php',
+    ];
 
     return $files;
   }

@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Table;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -133,13 +132,20 @@ class CategoryTable extends MultipleAssetsTable implements VersionableTableInter
     // Return password only if user is admin or owner
     $this->pw_protected = false;
 
-    if(isset($this->password) && !empty($this->password) && !\in_array($keys, $unlockedCats))
+    if(!empty($this->password) && !\in_array($keys, $unlockedCats))
     {
-      if(!$comp->getAccess()->checkACL('admin') || $user->id != $this->created_by)
-      {
-        $this->password = '';
-      }
-
+// ToDo: solve context issue see issue 288
+//      //if(!$comp->getAccess()->checkACL('admin') || $user->id != $this->created_by)
+//      $isAccess = $comp->getAccess()->checkACL('edit');
+//      $diffUser = $user->id != $this->created_by;
+//      $usrId = $user->id;
+//      $crtId = $this->created_by;
+//
+//      if(!$comp->getAccess()->checkACL('edit') || $user->id != $this->created_by)
+//      {
+//        $this->password = '';
+//      }
+//
       // Set a property showing that the category is protected
       $this->pw_protected = true;
     }

@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -19,7 +18,6 @@ use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
-
 
 /**
  * Supports an HTML select list of categories

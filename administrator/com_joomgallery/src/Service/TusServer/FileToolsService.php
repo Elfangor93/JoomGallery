@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -302,7 +301,8 @@ class FileToolsService
     $precision = 2;
 
     if($size == (int) $size && $size < 1024) // < 1MB
-    {$precision = 0;
+    {
+      $precision = 0;
     }
 
     $size = round($size / pow(1024, ($i = floor(log($size, 1024)))), $precision);

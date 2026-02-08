@@ -10,12 +10,12 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Image;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Media\Administrator\Exception\InvalidPathException;
@@ -43,9 +43,14 @@ class RawView extends JoomGalleryView
     $type = $this->app->input->get('type', 'thumbnail', 'word');
     $id   = $this->app->input->get('id', 0);
 
+    if($id == 0 || $id == '0')
+    {
+      $id = 'null';
+    }
+
     if($id !== 'null')
     {
-    $id = $this->app->input->get('id', 0, 'int');
+      $id = $this->app->input->get('id', 0, 'int');
     }
 
     // Check access

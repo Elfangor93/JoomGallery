@@ -8,7 +8,6 @@
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -271,7 +270,7 @@ function DisplayGalleryStatistic($statisticdata)
 function DisplayGalleryInfo($manifest)
 {
   ?>
-  <h3 class="card-header"><?php echo Text::_('INfo'); ?></h3>
+  <h3 class="card-header"><?php echo Text::_('COM_JOOMGALLERY_INFORMATION'); ?></h3>
   <div class="table-responsive">
     <table class="table w-auto">
       <tbody>
@@ -648,12 +647,12 @@ function DisplayOfficialExtensions($manifest)
     <div class="accordion" id="<?php echo $id; ?>">
       <div class="accordion-item">
         <h2 class="accordion-header" id="<?php echo $itemId; ?>Header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          <button class="accordion-button" type="button" data-bs-toggle="collapse"
             data-bs-target="#<?php echo $itemId; ?>" aria-expanded="false" aria-controls="<?php echo $itemId; ?>">
             <?php echo Text::_('COM_JOOMGALLERY_CONTROL_EXTENSIONS'); ?>
           </button>
         </h2>
-        <div id="<?php echo $itemId; ?>" class="accordion-collapse collapse"
+        <div id="<?php echo $itemId; ?>" class="accordion-collapse collapse show"
           aria-labelledby="<?php echo $itemId; ?>Header" data-bs-parent="#<?php echo $id; ?>">
           <div class="accordion-body">
             <table class="table table-striped">

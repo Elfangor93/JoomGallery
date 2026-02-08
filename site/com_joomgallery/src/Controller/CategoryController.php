@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -98,7 +97,7 @@ class CategoryController extends JoomBaseController
 
   /**
    * Add a new category
-   * Checkout and redirect to from view
+   * Checkout and redirect to form view
    *
    * @return  void
    *

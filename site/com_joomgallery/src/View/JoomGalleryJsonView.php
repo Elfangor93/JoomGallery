@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -56,12 +55,12 @@ class JoomGalleryJsonView extends JsonView
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
   /**
-   * JUser object, holds the current user data
+   * User object, holds the current user data
    *
    * @access  protected
    * @var     object
@@ -99,7 +98,11 @@ class JoomGalleryJsonView extends JsonView
     $this->component = $this->app->bootComponent(_JOOM_OPTION);
     $this->user      = $this->app->getIdentity();
 
-    if(strpos($this->component->version, 'dev'))
+    if( stripos($this->component->version, 'dev') ||
+        stripos($this->component->version, 'alpha') ||
+        stripos($this->component->version, 'beta') ||
+        stripos($this->component->version, 'rc')
+     )
     {
       // We are dealing with a development version (alpha or beta)
       $this->message = Text::_('COM_JOOMGALLERY_NOTE_DEVELOPMENT_VERSION');
@@ -148,7 +151,7 @@ class JoomGalleryJsonView extends JsonView
     // Prevent the api url from being indexed
     $this->app->setHeader('X-Robots-Tag', 'noindex, nofollow');
 
-    // JInput object
+    // Input object
     $input = $this->app->getInput();
 
     // Serializing the output

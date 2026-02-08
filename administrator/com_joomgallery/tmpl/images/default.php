@@ -8,7 +8,6 @@
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -265,7 +264,7 @@ if($saveOrder && !empty($this->items))
                 <td class="small d-none d-md-table-cell text-center">
                   <?php
                     $date = $item->date;
-                    echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
+                    echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC6')) : '-';
                   ?>
                 </td>
 

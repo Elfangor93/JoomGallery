@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View\Category;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -68,6 +67,7 @@ class HtmlView extends JoomGalleryView
     }
 
     $this->addToolbar();
+
     parent::display($tpl);
   }
 

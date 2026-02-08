@@ -10,13 +10,13 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Images;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomgallery\Component\Joomgallery\Administrator\View\JoomGalleryView;
+use Joomgallery\Component\Joomgallery\Site\Model\ImagesModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Router\Route;
@@ -49,7 +49,7 @@ class HtmlView extends JoomGalleryView
    *
    * @return void
    *
-   * @throws Exception
+   * @throws \Exception
    */
   public function display($tpl = null)
   {
@@ -81,7 +81,7 @@ class HtmlView extends JoomGalleryView
       // Redirect to gallery view
       $this->app->redirect(Route::_(JoomHelper::getViewRoute('gallery')));
 
-      return false;
+    return;
     }
 
     $this->_prepareDocument();

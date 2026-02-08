@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -19,6 +18,8 @@ use Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterfa
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Controller\AdminController as BaseAdminController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\View\ViewInterface;
 use Joomla\CMS\User\CurrentUserInterface;
 use Joomla\Input\Input;
 
@@ -45,7 +46,7 @@ class JoomAdminController extends BaseAdminController
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
@@ -102,7 +103,7 @@ class JoomAdminController extends BaseAdminController
    *
    * @return  mixed   The value returned by the called Method.
    *
-   * @throws  Exception
+   * @throws  \Exception
    * @since   4.0.0
    */
   public function execute($task)

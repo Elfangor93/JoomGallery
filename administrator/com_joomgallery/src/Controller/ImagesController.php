@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -97,7 +96,7 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @throws  Exception
+   * @throws  \Exception
    */
   public function duplicate()
   {
@@ -144,7 +143,7 @@ class ImagesController extends JoomAdminController
    *
    * @return  void
    *
-   * @throws  Exception
+   * @throws  \Exception
    */
   public function recreate()
   {
@@ -264,7 +263,6 @@ class ImagesController extends JoomAdminController
    * @return  void
    *
    * @since   4.0.0
-   *
    * @throws  \Exception
    */
   public function saveOrderAjax()
@@ -335,6 +333,7 @@ class ImagesController extends JoomAdminController
     if(empty($cid))
     {
       $this->app->getLogger()->warning(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), ['image' => 'jerror']);
+      // ToDo Manuel: Fix array to string conversion
       $this->component->addLog(Text::_($this->text_prefix . '_NO_ITEM_SELECTED' . ['image' => 'jerror']), 'warning', 'jerror');
     }
     else
@@ -348,7 +347,7 @@ class ImagesController extends JoomAdminController
       // Change the state of the items.
       try
       {
-        $model->changeSate($cid, $type, $value);
+        $model->changeState($cid, $type, $value);
         $errors = $model->getErrors();
         $ntext  = null;
 
