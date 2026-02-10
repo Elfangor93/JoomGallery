@@ -10,13 +10,14 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\View\Image;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
+use Joomgallery\Component\Joomgallery\Administrator\Model\ImageModel;
 use Joomgallery\Component\Joomgallery\Administrator\View\Image\RawView as AdminRawView;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 /**

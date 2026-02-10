@@ -10,13 +10,13 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 

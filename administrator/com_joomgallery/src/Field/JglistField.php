@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Field;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -176,6 +175,17 @@ class JglistField extends ListField
     return $options;
   }
 
+  /**
+   * Restrict field name to "a-z2, "0-9" or "_-" characters
+   * On context found the value from config is retrieved with a default value given
+   *
+   * @param $default
+   *
+   * ??? Why is $default not used when context is not given ???
+   *
+   * @throws \Exception
+   * @since 4.0
+   */
   protected function getGlobalValue($default = '')
   {
     $fieldname = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $this->fieldname);

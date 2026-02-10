@@ -1,6 +1,17 @@
 <?php
-require_once '../administrator/com_joomgallery/vendor/colinodell/indentation/src/Indentation.php';
+/**
+ * *********************************************************************************
+ *    @package    com_joomgallery                                                 **
+ *    @author     JoomGallery::ProjectTeam <team@joomgalleryfriends.net>          **
+ *    @copyright  2008 - 2025  JoomGallery::ProjectTeam                           **
+ *    @license    GNU General Public License version 3 or later                   **
+ * *********************************************************************************
+ */
+
+require_once __DIR__ . '/../administrator/com_joomgallery/vendor/autoload.php';
 use ColinODell\Indentation\Indentation;
+
+$rootDir = realpath(__DIR__ . '/..');
 
 // Setting
 //----------------------
@@ -38,9 +49,11 @@ function stripHeader(string $content): string
     if(preg_match('/^\s*\/\*\*/', $line)) {
       continue;
     }
+
     if(preg_match('/^\s*\*/', $line)) {
       continue;
     }
+
     if(preg_match('/^\s*\*\/\s*$/', $line)) {
       continue;
     }
@@ -52,7 +65,7 @@ function stripHeader(string $content): string
 
     // first class-like definition found
     if(preg_match('/^\s*(final\s+|abstract\s+)?(class|interface|trait|enum)\s+\w+/i', $line)) {
-      return implode("\n", array_slice($lines, $i));
+      return implode("\n", \array_slice($lines, $i));
     }
   }
 
@@ -77,7 +90,7 @@ function getPhpFilesRecursively(string $directory, array $exclude = []): Generat
       {
         $name = strtolower(basename($current));
 
-        if(in_array($name, $exclude))
+        if(\in_array($name, $exclude))
         {
           return false; // do not recurse into this directory
         }
@@ -99,11 +112,11 @@ function getPhpFilesRecursively(string $directory, array $exclude = []): Generat
 }
 
 echo PHP_EOL;
-echo "Mode: " . ($doFix ? "FIXING files" : "ANALYZE only (no changes written)") . PHP_EOL;
+echo 'Mode: ' . ($doFix ? 'FIXING files' : 'ANALYZE only (no changes written)') . PHP_EOL;
 echo PHP_EOL;
 
-$rootDir = dirname(__DIR__);
 $stats = ['total' => 0, 'tobeFixed' => 0, 'good' => 0, 'successful' => 0, 'error' => 0];
+
 foreach($folders as $folder)
 {
   $baseDir = $rootDir . DIRECTORY_SEPARATOR . $folder;
@@ -111,7 +124,7 @@ foreach($folders as $folder)
   foreach(getPhpFilesRecursively($baseDir, $exclude) as $file)
   {
     // Skip this file to avoid reloading itself
-    if($file === __FILE__ || \basename($file) === 'Indentation.php')
+    if($file === __FILE__ || basename($file) === 'Indentation.php')
     {
       continue;
     }
@@ -120,21 +133,23 @@ foreach($folders as $folder)
 
     // Read file
     $content = file_get_contents($file);
+
     if($content === false)
     {
-      echo "Cannot read file: " . basename($file) . PHP_EOL . PHP_EOL;
+      echo 'Cannot read file: ' . basename($file) . PHP_EOL . PHP_EOL;
       continue;
     }
 
     // Strip file headers
     $content_det = stripHeader($content);
+
     if($content_det === '')
     {
       $content_det = $content;
     }
 
     // Detect tabs
-    $hasTabs = \strpos($content_det, "\t") !== false;
+    $hasTabs = strpos($content_det, "\t") !== false;
 
     // Detect indentation
     $indent       = Indentation::detect($content_det);
@@ -145,7 +160,7 @@ foreach($folders as $folder)
     if($details || $hasTabs || $needReIndent)
     {
       $hasTabsString = $hasTabs ? 'true' : 'false';
-      echo "File (" . basename($file) . "): tabs: $hasTabsString, type: $currentType, size: $currentSize" . PHP_EOL;
+      echo 'File (' . basename($file) . "): tabs: $hasTabsString, type: $currentType, size: $currentSize" . PHP_EOL;
     }
 
     if($hasTabs || $needReIndent)
@@ -175,11 +190,11 @@ foreach($folders as $folder)
       }
 
       // Normalize tabs to spaces in the whole file
-      $content = \str_replace("\t", "  ", $content);
+      $content = str_replace("\t", '  ', $content);
 
       // Normalize mixed indents
-      $content = \preg_replace_callback('/^\s+/m', function($m) {
-          return \str_replace("\t", "  ", $m[0]);
+      $content = preg_replace_callback('/^\s+/m', function($m) {
+          return str_replace("\t", '  ', $m[0]);
       }, $content);
     }
 
@@ -205,13 +220,13 @@ foreach($folders as $folder)
     {
       if($doFix)
       {
-        \file_put_contents($file, $newContent);
+        file_put_contents($file, $newContent);
         $stats['successful'] = $stats['successful'] + 1;
       }
     }
     catch(\Exception $e)
     {
-      echo "ERROR: Cannot write file " . basename($file) . PHP_EOL;
+      echo 'ERROR: Cannot write file ' . basename($file) . PHP_EOL;
       $stats['error'] = $stats['error'] + 1;
     }
 
@@ -225,6 +240,7 @@ echo '-----------------------' . PHP_EOL;
 echo 'Total files: ' . $stats['total'] . PHP_EOL;
 echo 'Nothing to fix: ' . $stats['good'] . PHP_EOL;
 echo 'Needs fixing: ' . $stats['tobeFixed'] . PHP_EOL;
+
 if($stats['tobeFixed'] > 0)
 {
   echo 'Successfully fixed: ' . $stats['successful'] . PHP_EOL;
@@ -236,3 +252,19 @@ if($stats['tobeFixed'] > 0)
 }
 echo '-----------------------' . PHP_EOL;
 echo PHP_EOL;
+
+// EXIT CODE HANDLING
+$exitCode = 0;
+
+if($stats['error'] > 0)
+{
+  // Error during fixing
+  $exitCode = 1;
+}
+elseif(!$doFix && $stats['tobeFixed'] > 0)
+{
+  // Found something that needs to be fixed
+  $exitCode = 1;
+}
+
+exit($exitCode);

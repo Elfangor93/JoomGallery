@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -39,7 +38,7 @@ class ConfigController extends JoomFormController
    *
    * @since   4.0.0
    */
-  public function reset($key = null, $urlVar = null)
+  public function reset($key = null, $urlVar = null): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -96,7 +95,7 @@ class ConfigController extends JoomFormController
     $this->task = 'apply';
 
     // Perform save task
-      parent::save($key, $urlVar);
+    return parent::save($key, $urlVar);
   }
 
   /**
@@ -106,7 +105,7 @@ class ConfigController extends JoomFormController
    *
    * @since   4.0.0
    */
-  public function export()
+  public function export(): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -175,6 +174,8 @@ class ConfigController extends JoomFormController
     echo json_encode($data);
 
     $this->app->close();
+
+    return true;
   }
 
   /**
@@ -184,7 +185,7 @@ class ConfigController extends JoomFormController
    *
    * @since   4.0.0
    */
-  public function import()
+  public function import(): bool
   {
     // Check for request forgeries.
     $this->checkToken();
@@ -280,7 +281,7 @@ class ConfigController extends JoomFormController
     $this->component->addLog(Text::sprintf('COM_JOOMGALLERY_SUCCESS_IMPORT', $file['name']), 'info', 'jerror');
 
     // Perform save task
-      parent::save($key, $urlVar);
+    return parent::save($key, $urlVar);
   }
 
   /**

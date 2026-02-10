@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Service\TusServer;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -285,7 +284,7 @@ class Server implements ServerInterface
     $this->app->sendHeaders();
     echo $this->app->getBody();
 
-    // The process must only sent the HTTP headers and content: kill request after send
+        // The process only needs to send the HTTP headers and content: kill request after send
     exit;
   }
 
@@ -399,7 +398,7 @@ class Server implements ServerInterface
       return;
     }
 
-    // if file in storage does not exists
+        // if file in storage does not exist
     if(!file_exists($this->directory . $this->getFilename()))
     {
       // allow new upload

@@ -8,7 +8,6 @@
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -55,7 +54,7 @@ $attr = '';
 // Set global value in first option
 if(strpos($options[0]->text, '%s') !== false)
 {
-  $options[0]->text = str_replace('%s', $globvalue, $options[0]->text);
+  $options[0]->text = str_replace('%s', $globvalue ?? '', $options[0]->text);
 }
 
 // Initialize the field attributes.

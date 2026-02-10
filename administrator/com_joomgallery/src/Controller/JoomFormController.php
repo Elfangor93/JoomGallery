@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -46,7 +45,7 @@ class JoomFormController extends BaseFormController
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
@@ -104,7 +103,7 @@ class JoomFormController extends BaseFormController
    *
    * @return  mixed   The value returned by the called Method.
    *
-   * @throws  Exception
+   * @throws  \Exception
    * @since   4.0.0
    */
   public function execute($task)

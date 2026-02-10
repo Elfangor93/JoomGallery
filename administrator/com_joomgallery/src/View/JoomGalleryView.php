@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Administrator\View;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -66,7 +65,7 @@ class JoomGalleryView extends BaseHtmlView
    * JoomGallery access service
    *
    * @access  protected
-   * @var     Joomgallery\Component\Joomgallery\Administrator\Service\Access\AccessInterface
+   * @var     AccessInterface
    */
   protected $acl = null;
 
@@ -183,9 +182,12 @@ class JoomGalleryView extends BaseHtmlView
         $menu_link->getVar('view') == $this->getName()
       )
     {
-      if($menu_link->getVar('id', 0) && property_exists($this->item, 'id'))
+      if($menu_link->getVar('id', 0))
       {
-        return $menu_link->getVar('id', 0) == $this->item->id;
+        if( !empty($this->item) && property_exists($this->item, 'id'))
+        {
+          return $menu_link->getVar('id', 0) == $this->item->id;
+        }
       }
 
       return true;

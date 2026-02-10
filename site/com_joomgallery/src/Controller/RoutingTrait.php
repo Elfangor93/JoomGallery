@@ -10,7 +10,6 @@
 
 namespace Joomgallery\Component\Joomgallery\Site\Controller;
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -32,18 +31,18 @@ trait RoutingTrait
    */
   protected $useReturnPage = false;
 
-  /**
-   * Get the return URL.   *
-   * If a "return" variable has been passed in the request
-   *
-   * @param   string  Optional: A default view to return
-   *
-   * @return  string  The return URL.
-   *
-   * @since   4.0.0
-   */
-  protected function getReturnPage(string $default = '')
-  {
+    /**
+     * Get the return URL.   *
+     * If a "return" variable has been passed in the request
+     *
+     * @param   string $default Optional: A default view to return
+     *
+     * @return  string  The return URL.
+     *
+     * @since   4.0.0
+     */
+    protected function getReturnPage(string $default = ''): string
+    {
     $return = $this->input->get('return', null, 'base64');
 
     if(empty($return) || !Uri::isInternal(base64_decode($return)))
@@ -61,7 +60,7 @@ trait RoutingTrait
       $this->useReturnPage = true;
 
       return base64_decode($return);
-  }
+    }
 
   /**
    * Gets the URL arguments to append to an item redirect.

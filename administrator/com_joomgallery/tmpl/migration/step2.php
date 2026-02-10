@@ -8,7 +8,6 @@
  * *********************************************************************************
  */
 
-// No direct access
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
@@ -207,5 +206,5 @@ $wa->useStyle('com_joomgallery.admin')
 
     let bsmodal = new bootstrap.Modal(modal, {keyboard: false});
     bsmodal.show();
-  };
+  }
 </script>
