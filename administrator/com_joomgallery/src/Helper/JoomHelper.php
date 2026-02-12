@@ -703,6 +703,47 @@ class JoomHelper
   }
 
   /**
+   * Returns a list of parent/child categories
+   *
+   * @param   string/object/int   $cat         Alias, database object or ID of the category
+   * @param   string              $type        Which kind of nde tree (default: cpl)
+   * @param   bool                $self        Include current node id (default: false)
+   * @param   bool                $root        Include root node (default: false)
+   *
+   * @return  array
+   *
+   * @since   4.4.0
+   */
+  public static function getCategories($cat, $type = 'cpl', $self = false, $root = false)
+  {
+    $cats = [];
+
+    if(!\is_object($cat))
+    {
+      if((!is_numeric($cat) && !\is_string($cat)) || $cat == 0)
+      {
+        // no actual category given
+        return $cats;
+      }
+
+      $cat = self::getRecord('category', $cat);
+    }
+
+    // Create the category table
+    $com_obj = self::getComponent();
+
+    if(!$table = $com_obj->getMVCFactory()->createTable('category', 'administrator'))
+    {
+      return $cats;
+    }
+
+    // Load categories
+    $table->load($cat->id);
+
+    return $table->getNodeTree($type, $self, $root);
+  }
+
+  /**
    * Get the route to a site item view.
    *
    * @param   string   $type      Name of the content type.
