@@ -16,4 +16,22 @@
     <folder>services</folder>
     <folder plugin="joomgallery">src</folder>
   </files>
+
+  <config>
+    <fields name="params">
+      <fieldset name="basic" addfieldprefix="Joomla\Component\Finder\Administrator\Field">
+        <field name="taxonomies"
+                type="taxonomytypes"
+                label="PLG_FINDER_JOOMGALLERY_TAXONOMIES_LABEL"
+                default="type,category,tags,language,author"
+                multiple="true" >
+          <option value="author">JAUTHOR</option>
+          <option value="category">JCATEGORY</option>
+          <option value="tags">JTAG</option>
+          <option value="language">JFIELD_LANGUAGE_LABEL</option>
+          <option value="type">PLG_FINDER_JOOMGALLERY_TAXONOMIES_TYPE</option>
+        </field>
+      </fieldset>
+    </fields>
+  </config>
 </extension>

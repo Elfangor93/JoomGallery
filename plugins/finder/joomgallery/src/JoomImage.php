@@ -17,7 +17,6 @@ namespace Joomgallery\Plugin\Finder\Joomgallery\Extension;
 use Joomgallery\Component\Joomgallery\Administrator\Helper\JoomHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Event\Finder as FinderEvent;
-use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Component\Finder\Administrator\Indexer\Adapter;
 use Joomla\Component\Finder\Administrator\Indexer\Helper;
 use Joomla\Component\Finder\Administrator\Indexer\Indexer;
@@ -25,7 +24,6 @@ use Joomla\Component\Finder\Administrator\Indexer\Result;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\QueryInterface;
 use Joomla\Event\SubscriberInterface;
-use Joomla\Registry\Registry;
 
 /**
  * Smart Search adapter for JoomGallery Images.
@@ -136,6 +134,11 @@ final class JoomImage extends Adapter implements SubscriberInterface
 	 */
 	protected function setup()
 	{
+    if(!ComponentHelper::isEnabled($this->extension))
+    {
+      return false;
+    }
+
     // Define JoomGallery constants
     require_once(JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php');
 
@@ -417,12 +420,12 @@ final class JoomImage extends Adapter implements SubscriberInterface
 		$item->setLanguage();
 
 		// Check if the extension is enabled.
-		if (ComponentHelper::isEnabled($this->extension) === false)
+		if(ComponentHelper::isEnabled($this->extension) === false)
 		{
 			return;
 		}
 
-		$item->context = 'com_joomgallery';
+		$item->context = 'com_joomgallery.image';
 
 		// Check tmp state
 		if(!is_null($this->tmp_state['state']))
@@ -442,28 +445,29 @@ final class JoomImage extends Adapter implements SubscriberInterface
     // Translate access
     $item->access = max($item->access, $item->cat_access);
 
-		// Get the language
-		$item->language = '*';
-
 		// Get the dates
-		$item->publish_start_date = $item->imgdate;
-		unset($item->imgdate);
-		$item->publish_end_date = '0000-00-00 00:00:00';
+		$item->publish_start_date = $item->date;
+		unset($item->date);
+		//$item->publish_end_date = '0000-00-00 00:00:00';
+    $item->publish_end_date = null;
 
 		// Trigger the onContentPrepare event.
-		//$item->summary = FinderIndexerHelper::prepareContent($item->summary, $item->params, $item);
-		//$item->body    = FinderIndexerHelper::prepareContent($item->body, $item->params, $item);
+		$item->summary = Helper::prepareContent($item->summary, $item->params, $item);
+    $item->body = $item->summary;
 
 		// Build the necessary route and path information.
-		$item->url = $this->getUrl($item->id, $this->extension, $this->layout);
-		$item->route = $this->getUrl($item->id, $this->extension, 'detail');
-		$item->path = FinderIndexerHelper::getContentPath($item->route);
+		$item->url   = $this->getUrl($item->id, $this->extension, $this->layout);
+    $item->route = JoomHelper::getViewRoute('image', $item->id, $item->catid, null, null, $item->language);
+		$item->path  = Helper::getContentPath($item->route);
 
-		// Add the metadata processing instructions.
-		$item->addInstruction(FinderIndexer::META_CONTEXT, 'metakey');
-		$item->addInstruction(FinderIndexer::META_CONTEXT, 'metadesc');
-		$item->addInstruction(FinderIndexer::META_CONTEXT, 'owner');
-		$item->addInstruction(FinderIndexer::META_CONTEXT, 'author');
+    // Get the menu title if it exists.
+    $title = $this->getItemMenuTitle($item->url);
+
+    // Adjust the title if necessary.
+    if(!empty($title) && $this->params->get('use_menu_title', true))
+    {
+      $item->title = $title;
+    }
 
 		// Translate the state.
 		$this->tmp   = $item;
@@ -471,29 +475,62 @@ final class JoomImage extends Adapter implements SubscriberInterface
 		$item->state = $this->translateState($item->state, $item->cat_state);
 		$this->tmp   = null;
 
+    // Get taxonomies to display
+    $taxonomies = $this->params->get('taxonomies', ['type', 'author', 'category', 'tags', 'language']);
+
 		// Add the type taxonomy data.
-		$item->addTaxonomy('Type', 'Image (JoomGallery)');
+    if(\in_array('type', $taxonomies))
+    {
+		  $item->addTaxonomy('Type', 'Image (JoomGallery)');
+    }
 
 		// Add the author taxonomy data.
-		if (!empty($item->author))
+		if(\in_array('author', $taxonomies) && (!empty($item->author)))
 		{
 			$item->addTaxonomy('Author', $item->author);
 		}
 
-		// Add the author taxonomy data.
-		if (!empty($item->owner))
-		{
-			$item->addTaxonomy('Owner', $item->owner);
-		}
-
 		// Add the category taxonomy data.
-		$item->addTaxonomy('Category', $item->category, $item->cat_state, $item->cat_access);
+    if(\in_array('category', $taxonomies))
+    {
+      $item->addTaxonomy('Category', $item->category, $item->cat_state, $item->cat_access);
+    }
 
 		// Add the language taxonomy data.
-		//$item->addTaxonomy('Language', $item->language);
+    if(\in_array('language', $taxonomies))
+    {
+		  $item->addTaxonomy('Language', $item->language);
+    }
+
+    // Fetch tags
+    $tags = $this->getTagsForImage((int) $item->id);
+    foreach($tags as $tag)
+    {
+      // Add the tags taxonomy data. (multi-value taxonomy)
+      if(\in_array('tags', $taxonomies))
+      {
+        $item->addTaxonomy('Tags', $tag);
+      }
+    }
+
+    // Put tags into a single text field for indexing
+    $item->tags = implode(' ', $tags);
+
+    // Title = strongest relevance
+    $item->addInstruction(Indexer::TITLE_CONTEXT, 'title');
+
+    // Main searchable text
+    $item->addInstruction(Indexer::TEXT_CONTEXT, 'summary');
+    $item->addInstruction(Indexer::TEXT_CONTEXT, 'tags');
+    $item->addInstruction(Indexer::TEXT_CONTEXT, 'author');
+
+    // Metadata relevance (weak)
+		$item->addInstruction(Indexer::META_CONTEXT, 'metakey');
+		$item->addInstruction(Indexer::META_CONTEXT, 'metadesc');
 
 		// Get content extras.
-		FinderIndexerHelper::getContentExtras($item);
+		Helper::getContentExtras($item);
+    Helper::addCustomFields($item, 'com_joomgallery.image');
 
 		//dump($item, 'indexed joomgallery item');
 
@@ -504,9 +541,9 @@ final class JoomImage extends Adapter implements SubscriberInterface
   /**
 	 * Method to get the SQL query used to retrieve a list of all items to index.
 	 *
-	 * @param   mixed  $query  A JDatabaseQuery object or null.
+	 * @param   mixed  $query  A QueryInterface object or null.
 	 *
-	 * @return  JDatabaseQuery  A database object.
+	 * @return  QueryInterface  A database object.
 	 *
 	 * @since   2.5
 	 */
@@ -515,15 +552,15 @@ final class JoomImage extends Adapter implements SubscriberInterface
 		$db = $this->getDatabase();
 
 		// Check if we can use the supplied SQL query.
-		$query = $query instanceof JDatabaseQuery ? $query : $db->getQuery(true)
+    $query = $query instanceof QueryInterface ? $query : $db->getQuery(true)
 			->select('a.id, a.title AS title, a.alias, a.author AS author, a.description AS summary')
 			->select('a.published AS state, a.catid, a.date')
-			->select('a.hidden, a.featured, a.checked_out, a.approved, a.params')
+			->select('a.hidden, a.featured, a.checked_out, a.approved, a.params, a.language')
 			->select('a.metakey, a.metadesc, a.access, a.ordering')
 			->select('c.name AS category, c.published AS cat_state')
 			->select('u.name AS owner')
-			->from('#__joomgallery AS a')
-			->join('LEFT', '#__joomgallery_catg AS c ON c.id = a.catid')
+			->from($this->table . ' AS a')
+			->join('LEFT', '#__joomgallery_categories AS c ON c.id = a.catid')
 			->join('LEFT', '#__users AS u ON u.id = a.created_by');
 
 		return $query;
@@ -533,7 +570,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
 	 * Method to get a SQL query to load the published and access states for
 	 * an item and category.
 	 *
-	 * @return  JDatabaseQuery  A database object.
+	 * @return  QueryInterface  A database object.
 	 *
 	 * @since   2.5
 	 */
@@ -612,7 +649,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
 			->select($db->quoteName('hidden'))
 			->select($db->quoteName('approved'))
 			->select($db->quoteName('access'))
-			->from($db->quoteName('#__joomgallery'))
+			->from($db->quoteName($this->table))
 			->where($db->quoteName('id') . ' = ' . (int) $row->id);
 		$db->setQuery($query);
 		$states = $db->loadObject();
@@ -993,5 +1030,29 @@ final class JoomImage extends Adapter implements SubscriberInterface
     }
 
     return $cat_access;
+  }
+
+  /**
+	 * Method to get associated tags for a given image
+	 *
+	 * @param   integer  $imgId  ID of the image
+   *
+   * @return  array    List of tags
+	 *
+	 * @since   4.4
+	 */
+  protected function getTagsForImage(int $imgId): array
+  {
+    $db = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select('t.title')
+      ->from($db->quoteName('#__joomgallery_tags', 't'))
+      ->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'ref') . ' ON ' . $db->quoteName('ref.tagid') . ' = ' . $db->quoteName('t.id'))
+      ->where($db->quoteName('ref.imgid') . ' = ' . (int) $imgId)
+      ->order($db->quoteName('t.title') . ' ASC');
+
+    $db->setQuery($query);
+
+    return $db->loadColumn() ?: [];
   }
 }
