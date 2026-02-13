@@ -12,10 +12,11 @@
 \defined('_JEXEC') || die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Joomgallery\Plugin\Task\Joomgallery\Extension\Joomgallery;
+use Joomgallery\Plugin\Finder\Joomgallery\Extension\JoomImage;
 use Joomla\CMS\Extension\PluginInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Database\DatabaseInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
