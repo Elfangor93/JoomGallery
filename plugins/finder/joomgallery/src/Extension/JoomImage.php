@@ -117,25 +117,25 @@ final class JoomImage extends Adapter implements SubscriberInterface
    */
   public static function getSubscribedEvents(): array
   {
-  try
-  {
-    $events = parent::getSubscribedEvents();
-  }
-  catch (\Throwable $th)
-  {
-    $events = [];
-  }
+    try
+    {
+      $events = parent::getSubscribedEvents();
+    }
+    catch (\Throwable $th)
+    {
+      $events = [];
+    }
 
-return array_merge(
-    $events,
-    [
-      'onFinderCategoryChangeState' => 'onFinderCategoryChangeState',
-      'onFinderChangeState'         => 'onFinderChangeState',
-      'onFinderAfterDelete'         => 'onFinderAfterDelete',
-      'onFinderBeforeSave'          => 'onFinderBeforeSave',
-      'onFinderAfterSave'           => 'onFinderAfterSave',
-    ]
-);
+    return array_merge(
+        $events,
+        [
+          'onFinderCategoryChangeState' => 'onFinderCategoryChangeState',
+          'onFinderChangeState'         => 'onFinderChangeState',
+          'onFinderAfterDelete'         => 'onFinderAfterDelete',
+          'onFinderBeforeSave'          => 'onFinderBeforeSave',
+          'onFinderAfterSave'           => 'onFinderAfterSave',
+        ]
+    );
   }
 
   /**
@@ -147,13 +147,13 @@ return array_merge(
    */
   protected function setup()
   {
-  if(!ComponentHelper::isEnabled($this->extension))
-  {
-    return false;
-  }
+    if(!ComponentHelper::isEnabled($this->extension))
+    {
+      return false;
+    }
 
-  // Define JoomGallery constants
-  require_once(JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php');
+    // Define JoomGallery constants
+    require_once(JPATH_ADMINISTRATOR . '/components/com_joomgallery/includes/defines.php');
 
     return true;
   }
@@ -170,17 +170,17 @@ return array_merge(
    */
   public function onFinderAfterDelete($event): void
   {
-  if(version_compare(JVERSION, '5.0.0', '<'))
-  {
-    // Joomla 4
-    [$context, $table] = $event->getArguments();
-  }
-  else
-  {
-    // Joomla 5 or newer
-    $context = $event->getContext();
-    $table   = $event->getItem();
-  }
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $table] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $table   = $event->getItem();
+    }
 
     if($context === 'com_joomgallery.image')
     {
@@ -189,7 +189,7 @@ return array_merge(
     }
     elseif($context === 'com_joomgallery.category')
     {
-    $db = $this->getDatabase();
+      $db = $this->getDatabase();
 
       // get image ids from category
       $query = clone $this->getStateQuery();
@@ -236,18 +236,18 @@ return array_merge(
    */
   public function onFinderAfterSave($event): void
   {
-  if(version_compare(JVERSION, '5.0.0', '<'))
-  {
-    // Joomla 4
-    [$context, $row, $isNew] = $event->getArguments();
-  }
-  else
-  {
-    // Joomla 5 or newer
-    $context = $event->getContext();
-    $row     = $event->getItem();
-    $isNew   = $event->getIsNew();
-  }
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $row, $isNew] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $row     = $event->getItem();
+      $isNew   = $event->getIsNew();
+    }
 
     // We only want to handle joomgallery images here.
     if($context === 'com_joomgallery.image' || $context === 'com_joomgallery.image.quick' || $context === 'com_joomgallery.image.batch')
@@ -346,18 +346,18 @@ return array_merge(
    */
   public function onFinderBeforeSave($event): void
   {
-  if(version_compare(JVERSION, '5.0.0', '<'))
-  {
-    // Joomla 4
-    [$context, $row, $isNew] = $event->getArguments();
-  }
-  else
-  {
-    // Joomla 5 or newer
-    $context = $event->getContext();
-    $row     = $event->getItem();
-    $isNew   = $event->getIsNew();
-  }
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $row, $isNew] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $row     = $event->getItem();
+      $isNew   = $event->getIsNew();
+    }
 
     // We only want to handle joomgallery images here.
     if($context === 'com_joomgallery.image' || $context === 'com_joomgallery.image.quick' || $context === 'com_joomgallery.image.batch')
@@ -399,18 +399,18 @@ return array_merge(
    */
   public function onFinderChangeState($event): void
   {
-  if(version_compare(JVERSION, '5.0.0', '<'))
-  {
-    // Joomla 4
-    [$context, $pks, $value] = $event->getArguments();
-  }
-  else
-  {
-    // Joomla 5 or newer
-    $context = $event->getContext();
-    $pks     = $event->getPks();
-    $value   = $event->getValue();
-  }
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $pks, $value] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $pks     = $event->getPks();
+      $value   = $event->getValue();
+    }
 
     $value = \intval($value);
 
@@ -443,18 +443,18 @@ return array_merge(
    */
   public function onFinderCategoryChangeState($event): void
   {
-  if(version_compare(JVERSION, '5.0.0', '<'))
-  {
-    // Joomla 4
-    [$value] = $event->getArguments();
-  }
-  else
-  {
-    // Joomla 5 or newer
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$value] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
       $value = $event->getValue();
-  }
+    }
 
-  $value = \intval($value);
+    $value = \intval($value);
 
     // We only want to handle joomgallery categories that get changed in the publishing state.
     if($event->getExtension() === 'com_joomgallery.category' && $value >= 0)
@@ -494,8 +494,8 @@ return array_merge(
       $item->state = $this->tmp_state['state'];
     }
 
-  // Change category access due to parent categories
-  $item->cat_access = $this->getParentCatAccess($item->catid);
+    // Change category access due to parent categories
+    $item->cat_access = $this->getParentCatAccess($item->catid);
 
     // Check tmp access
     if(!\is_null($this->tmp_state['access']))
@@ -503,54 +503,54 @@ return array_merge(
       $item->access = $this->tmp_state['access'];
     }
 
-  // Translate access
-  $item->access = max($item->access, $item->cat_access);
+    // Translate access
+    $item->access = max($item->access, $item->cat_access);
 
     // Get the dates
     $item->publish_start_date = $item->date;
     unset($item->date);
     //$item->publish_end_date = '0000-00-00 00:00:00';
-  $item->publish_end_date = null;
+    $item->publish_end_date = null;
 
-  // Initialize the item parameters.
-  $item->params = new Registry($item->params);
+    // Initialize the item parameters.
+    $item->params = new Registry($item->params);
 
     // Trigger the onContentPrepare event.
     $item->summary = Helper::prepareContent($item->summary, $item->params, $item);
-  $item->body      = $item->summary;
+    $item->body    = $item->summary;
 
     // Build the necessary route and path information.
-    $item->url = $this->getUrl($item->id, $this->extension, $this->layout);
-  $item->route = JoomHelper::getViewRoute('image', $item->id, $item->catid, null, null, $item->language);
+    $item->url   = $this->getUrl($item->id, $this->extension, $this->layout);
+    $item->route = JoomHelper::getViewRoute('image', $item->id, $item->catid, null, null, $item->language);
 
-  // Get the menu title if it exists.
-  $title = $this->getItemMenuTitle($item->url);
+    // Get the menu title if it exists.
+    $title = $this->getItemMenuTitle($item->url);
 
-  // Adjust the title if necessary.
-  if(!empty($title) && $this->params->get('use_menu_title', true))
-  {
-    $item->title = $title;
-  }
+    // Adjust the title if necessary.
+    if(!empty($title) && $this->params->get('use_menu_title', true))
+    {
+      $item->title = $title;
+    }
 
     // Translate the state.
     $this->tmp   = $item;
-  $this->tmp     = $this->getParentCatStates($this->tmp);
+    $this->tmp   = $this->getParentCatStates($this->tmp);
     $item->state = $this->translateState($item->state, $item->cat_state);
     $this->tmp   = null;
 
-  // Get taxonomies to display
-  $taxonomies = $this->params->get('taxonomies', ['type', 'author', 'category', 'tags', 'language']);
+    // Get taxonomies to display
+    $taxonomies = $this->params->get('taxonomies', ['type', 'author', 'category', 'tags', 'language']);
 
-  if(!\is_array($taxonomies))
-  {
-    $taxonomies = explode(',', $taxonomies);
-  }
+    if(!\is_array($taxonomies))
+    {
+      $taxonomies = explode(',', $taxonomies);
+    }
 
-    // Add the type taxonomy data.
-  if(\in_array('type', $taxonomies))
-  {
+      // Add the type taxonomy data.
+    if(\in_array('type', $taxonomies))
+    {
       $item->addTaxonomy('Type', 'Image (JoomGallery)');
-  }
+    }
 
     // Add the author taxonomy data.
     if(\in_array('author', $taxonomies) && (!empty($item->author)))
@@ -559,51 +559,51 @@ return array_merge(
     }
 
     // Add the category taxonomy data.
-  if(\in_array('category', $taxonomies))
-  {
-    $item->addTaxonomy('Category', $item->category, $item->cat_state, $item->cat_access);
-  }
-
-    // Add the language taxonomy data.
-  if(\in_array('language', $taxonomies))
-  {
-      $item->addTaxonomy('Language', $item->language);
-  }
-
-  // Fetch tags
-  $tags = $this->getTagsForImage((int) $item->id);
-
-  foreach($tags as $tag)
-  {
-    // Add the tags taxonomy data. (multi-value taxonomy)
-    if(\in_array('tags', $taxonomies))
+    if(\in_array('category', $taxonomies))
     {
-    $item->addTaxonomy('Tag', $tag->title, $tag->published, $tag->access, $tag->language);
+      $item->addTaxonomy('Category', $item->category, $item->cat_state, $item->cat_access);
     }
-  }
 
-  // Put tags into a single text field for indexing
-  $item->tags = implode(' ', array_map(fn($tag) => $tag->title, $tags));
+      // Add the language taxonomy data.
+    if(\in_array('language', $taxonomies))
+    {
+      $item->addTaxonomy('Language', $item->language);
+    }
 
-  // Title = strongest relevance
-  $item->addInstruction(Indexer::TITLE_CONTEXT, 'title');
+    // Fetch tags
+    $tags = $this->getTagsForImage((int) $item->id);
 
-  // Main searchable text
-  $item->addInstruction(Indexer::TEXT_CONTEXT, 'summary');
-  $item->addInstruction(Indexer::TEXT_CONTEXT, 'tags');
-  $item->addInstruction(Indexer::TEXT_CONTEXT, 'author');
+    foreach($tags as $tag)
+    {
+      // Add the tags taxonomy data. (multi-value taxonomy)
+      if(\in_array('tags', $taxonomies))
+      {
+        $item->addTaxonomy('Tag', $tag->title, $tag->published, $tag->access, $tag->language);
+      }
+    }
 
-  // Metadata relevance (weak)
+    // Put tags into a single text field for indexing
+    $item->tags = implode(' ', array_map(fn($tag) => $tag->title, $tags));
+
+    // Title = strongest relevance
+    $item->addInstruction(Indexer::TITLE_CONTEXT, 'title');
+
+    // Main searchable text
+    $item->addInstruction(Indexer::TEXT_CONTEXT, 'summary');
+    $item->addInstruction(Indexer::TEXT_CONTEXT, 'tags');
+    $item->addInstruction(Indexer::TEXT_CONTEXT, 'author');
+
+    // Metadata relevance (weak)
     $item->addInstruction(Indexer::META_CONTEXT, 'metakey');
     $item->addInstruction(Indexer::META_CONTEXT, 'metadesc');
 
     // Get content extras.
     Helper::getContentExtras($item);
 
-  if(version_compare(JVERSION, '5.0.0', '>='))
-  {
-    Helper::addCustomFields($item, 'com_joomgallery.image');
-  }
+    if(version_compare(JVERSION, '5.0.0', '>='))
+    {
+      Helper::addCustomFields($item, 'com_joomgallery.image');
+    }
 
     // Index the item.
     $this->indexer->index($item);
@@ -623,7 +623,7 @@ return array_merge(
     $db = $this->getDatabase();
 
     // Check if we can use the supplied SQL query.
-  $query = $query instanceof QueryInterface ? $query : $db->getQuery(true)
+    $query = $query instanceof QueryInterface ? $query : $db->getQuery(true)
       ->select('a.id, a.title AS title, a.alias, a.author AS author, a.description AS summary')
       ->select('a.published AS state, a.catid, a.date')
       ->select('a.hidden, a.featured, a.checked_out, a.approved, a.params, a.language')
@@ -651,7 +651,7 @@ return array_merge(
    */
   protected function getUrl($id, $extension, $view)
   {
-  return 'index.php?option=' . $extension . '&view=' . $view . '&id=' . $id;
+    return 'index.php?option=' . $extension . '&view=' . $view . '&id=' . $id;
   }
 
   /**
@@ -729,7 +729,7 @@ return array_merge(
    */
   protected function checkItemState($row)
   {
-  $db = $this->getDatabase();
+    $db = $this->getDatabase();
 
     $query = $db->getQuery(true)
       ->select($db->quoteName('published'))
@@ -762,14 +762,14 @@ return array_merge(
   protected function translateState($value, $category = null)
   {
     // states before change
-    $published    = $this->tmp->state;
-    $approved     = $this->tmp->approved;
-    $hidden       = $this->tmp->hidden;
-    $cat_state    = (isset($this->tmp->cat_state)) ? $this->tmp->cat_state : 1;
-    $cat_hidden   = (isset($this->tmp->cat_hidden)) ? $this->tmp->cat_hidden : 0;
-    $cat_inhidden = (isset($this->tmp->cat_inhidden)) ? $this->tmp->cat_inhidden : 0;
-    $cat_exclude  = (isset($this->tmp->cat_exclude)) ? $this->tmp->cat_exclude : 0;
-  $cat_inexcluded = (isset($this->tmp->cat_inexcluded)) ? $this->tmp->cat_inexcluded : 0;
+    $published      = $this->tmp->state;
+    $approved       = $this->tmp->approved;
+    $hidden         = $this->tmp->hidden;
+    $cat_state      = (isset($this->tmp->cat_state)) ? $this->tmp->cat_state : 1;
+    $cat_hidden     = (isset($this->tmp->cat_hidden)) ? $this->tmp->cat_hidden : 0;
+    $cat_inhidden   = (isset($this->tmp->cat_inhidden)) ? $this->tmp->cat_inhidden : 0;
+    $cat_exclude    = (isset($this->tmp->cat_exclude)) ? $this->tmp->cat_exclude : 0;
+    $cat_inexcluded = (isset($this->tmp->cat_inexcluded)) ? $this->tmp->cat_inexcluded : 0;
 
     if($this->item_type == 'com_joomgallery.image')
     {
@@ -822,7 +822,7 @@ return array_merge(
     }
 
 
-      return 1;
+    return 1;
   }
 
   /**
@@ -838,7 +838,7 @@ return array_merge(
    */
   protected function itemStateChange($pks, $value, $reindex = true)
   {
-  $db = $this->getDatabase();
+    $db = $this->getDatabase();
 
     /*
      * The item's published state is tied to the category
@@ -887,7 +887,7 @@ return array_merge(
    */
   protected function categoryStateChange($pks, $value, $reindex = true)
   {
-  $db = $this->getDatabase();
+    $db = $this->getDatabase();
 
     /*
      * The item's published state is tied to the category
@@ -896,14 +896,14 @@ return array_merge(
      */
     foreach($pks as $pk)
     {
-    // create where array out of all subcategories
-    $subcats     = JoomHelper::getCategories($pk, 'children', true, false);
-    $where_array = [];
+      // create where array out of all subcategories
+      $subcats     = JoomHelper::getCategories($pk, 'children', true, false);
+      $where_array = [];
 
-    foreach($subcats as $cat)
-    {
-    array_push($where_array, 'c.id = ' . (int) $cat->id);
-    }
+      foreach($subcats as $cat)
+      {
+        array_push($where_array, 'c.id = ' . (int) $cat->id);
+      }
 
       $query = clone $this->getStateQuery();
       $query->where($where_array, 'OR');
@@ -948,7 +948,7 @@ return array_merge(
    */
   protected function itemAccessChange($row, $reindex = true)
   {
-  $db = $this->getDatabase();
+    $db = $this->getDatabase();
 
     $query = clone $this->getStateQuery();
     $query->where('a.id = ' . (int) $row->id);
@@ -986,19 +986,19 @@ return array_merge(
    */
   protected function categoryAccessChange($row, $reindex = true)
   {
-  // create where array out of all subcategories
-  $subcats     = JoomHelper::getCategories($row, 'children', true, false);
-  $where_array = [];
+    // create where array out of all subcategories
+    $subcats     = JoomHelper::getCategories($row, 'children', true, false);
+    $where_array = [];
 
-  foreach($subcats as $catid)
-  {
-    array_push($where_array, 'c.id = ' . (int) $catid);
-  }
+    foreach($subcats as $catid)
+    {
+      array_push($where_array, 'c.id = ' . (int) $catid);
+    }
 
-  $db = $this->getDatabase();
+    $db = $this->getDatabase();
 
-  $query = clone $this->getStateQuery();
-  $query->where($where_array, 'OR');
+    $query = clone $this->getStateQuery();
+    $query->where($where_array, 'OR');
 
     // Get the access level.
     $db->setQuery($query);
@@ -1036,49 +1036,49 @@ return array_merge(
    */
   protected function getParentCatStates($item)
   {
-  // get parent cats
-  $parent_cats = JoomHelper::getCategories($item->catid, 'parents', true, false);
+    // get parent cats
+    $parent_cats = JoomHelper::getCategories($item->catid, 'parents', true, false);
 
-  $where_array = [];
+    $where_array = [];
 
-  foreach($parent_cats as $cat)
-  {
-    array_push($where_array, 'id = ' . $cat['id']);
-  }
-
-  $db = $this->getDatabase();
-
-  // get all states of the parent cats
-  $query = $db->getQuery(true);
-  $query->select($db->quoteName(['published', 'hidden','exclude_search']));
-  $query->from($db->quoteName('#__joomgallery_categories'));
-  $query->where($where_array, 'OR');
-  $db->setQuery($query);
-  $results = $db->loadObjectList();
-
-  // add parent states to item object
-  foreach($results as $res)
-  {
-    if($res->hidden != 0)
+    foreach($parent_cats as $cat)
     {
-    // one of the parent categories is hidden
-    $item->cat_inhidden = 1;
+      array_push($where_array, 'id = ' . $cat['id']);
     }
 
-    if($res->exclude_search != 0)
+    $db = $this->getDatabase();
+
+    // get all states of the parent cats
+    $query = $db->getQuery(true);
+    $query->select($db->quoteName(['published', 'hidden','exclude_search']));
+    $query->from($db->quoteName('#__joomgallery_categories'));
+    $query->where($where_array, 'OR');
+    $db->setQuery($query);
+    $results = $db->loadObjectList();
+
+    // add parent states to item object
+    foreach($results as $res)
     {
-    // one of the parent categories is excluded from search
-    $item->cat_inexcluded = 1;
+      if($res->hidden != 0)
+      {
+        // one of the parent categories is hidden
+        $item->cat_inhidden = 1;
+      }
+
+      if($res->exclude_search != 0)
+      {
+        // one of the parent categories is excluded from search
+        $item->cat_inexcluded = 1;
+      }
+
+      if($res->published < 1)
+      {
+        // one of the parent categories has a publish state which is not 1 or 2
+        $item->cat_state = 0;
+      }
     }
 
-    if($res->published < 1)
-    {
-    // one of the parent categories has a publish state which is not 1 or 2
-    $item->cat_state = 0;
-    }
-  }
-
-  return $item;
+    return $item;
   }
 
   /**
@@ -1092,35 +1092,35 @@ return array_merge(
    */
   protected function getParentCatAccess($catid)
   {
-  // get parent cats
-  $parent_cats = JoomHelper::getCategories($catid, 'parents', true, false);
+    // get parent cats
+    $parent_cats = JoomHelper::getCategories($catid, 'parents', true, false);
 
-  $where_array = [];
+    $where_array = [];
 
-  foreach($parent_cats as $cat)
-  {
-    array_push($where_array, 'id = ' . $cat['id']);
-  }
+    foreach($parent_cats as $cat)
+    {
+      array_push($where_array, 'id = ' . $cat['id']);
+    }
 
-  $db = $this->getDatabase();
+    $db = $this->getDatabase();
 
-  // get all states of the parent cats
-  $query = $db->getQuery(true);
-  $query->select($db->quoteName(['access']));
-  $query->from($db->quoteName('#__joomgallery_categories'));
-  $query->where($where_array, 'OR');
-  $db->setQuery($query);
-  $results = $db->loadObjectList();
+    // get all states of the parent cats
+    $query = $db->getQuery(true);
+    $query->select($db->quoteName(['access']));
+    $query->from($db->quoteName('#__joomgallery_categories'));
+    $query->where($where_array, 'OR');
+    $db->setQuery($query);
+    $results = $db->loadObjectList();
 
-  // add parent states to item object
-  $cat_access = 1;
+    // add parent states to item object
+    $cat_access = 1;
 
-  foreach($results as $res)
-  {
-    $cat_access = max($cat_access, $res->access);
-  }
+    foreach($results as $res)
+    {
+      $cat_access = max($cat_access, $res->access);
+    }
 
-  return $cat_access;
+    return $cat_access;
   }
 
   /**
@@ -1134,16 +1134,16 @@ return array_merge(
    */
   protected function getTagsForImage(int $imgId): array
   {
-  $db    = $this->getDatabase();
-  $query = $db->getQuery(true)
-    ->select('t.title, t.access, t.published, t.language')
-    ->from($db->quoteName('#__joomgallery_tags', 't'))
-    ->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'ref') . ' ON ' . $db->quoteName('ref.tagid') . ' = ' . $db->quoteName('t.id'))
-    ->where($db->quoteName('ref.imgid') . ' = ' . (int) $imgId)
-    ->order($db->quoteName('t.title') . ' ASC');
+    $db    = $this->getDatabase();
+    $query = $db->getQuery(true)
+      ->select('t.title, t.access, t.published, t.language')
+      ->from($db->quoteName('#__joomgallery_tags', 't'))
+      ->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'ref') . ' ON ' . $db->quoteName('ref.tagid') . ' = ' . $db->quoteName('t.id'))
+      ->where($db->quoteName('ref.imgid') . ' = ' . (int) $imgId)
+      ->order($db->quoteName('t.title') . ' ASC');
 
-  $db->setQuery($query);
+    $db->setQuery($query);
 
-  return $db->loadObjectList() ?: [];
+    return $db->loadObjectList() ?: [];
   }
 }
