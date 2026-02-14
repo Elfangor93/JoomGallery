@@ -24,6 +24,7 @@ use Joomla\Component\Finder\Administrator\Indexer\Result;
 use Joomla\Database\DatabaseAwareTrait;
 use Joomla\Database\QueryInterface;
 use Joomla\Event\SubscriberInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Smart Search adapter for JoomGallery Images.
@@ -41,7 +42,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
    * @var    string
    * @since  4.4.0
    */
-  protected $context = 'joomgallery';
+  protected $context = 'JoomGallery';
 
   /**
    * The extension name.
@@ -57,7 +58,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
    * @var    string
    * @since  4.4.0
    */
-  protected $layout = 'joomgallery';
+  protected $layout = 'image';
 
   /**
    * The type of content that the adapter indexes.
@@ -116,7 +117,16 @@ final class JoomImage extends Adapter implements SubscriberInterface
    */
   public static function getSubscribedEvents(): array
   {
-    return array_merge(parent::getSubscribedEvents(), [
+    try
+    {
+      $events = parent::getSubscribedEvents();
+    }
+    catch (\Throwable $th)
+    {
+      $events = [];
+    }
+
+    return array_merge($events, [
       'onFinderCategoryChangeState' => 'onFinderCategoryChangeState',
       'onFinderChangeState'         => 'onFinderChangeState',
       'onFinderAfterDelete'         => 'onFinderAfterDelete',
@@ -155,10 +165,19 @@ final class JoomImage extends Adapter implements SubscriberInterface
    * @since   2.5
    * @throws  \Exception on database error.
    */
-  public function onFinderAfterDelete(FinderEvent\AfterDeleteEvent $event): void
+  public function onFinderAfterDelete($event): void
   {
-    $context = $event->getContext();
-    $table   = $event->getItem();
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $table] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $table   = $event->getItem();
+    }
 
 		if($context === 'com_joomgallery.image')
 		{
@@ -211,11 +230,20 @@ final class JoomImage extends Adapter implements SubscriberInterface
    * @since   2.5
    * @throws  \Exception on database error.
    */
-  public function onFinderAfterSave(FinderEvent\AfterSaveEvent $event): void
+  public function onFinderAfterSave($event): void
   {
-    $context = $event->getContext();
-    $row     = $event->getItem();
-    $isNew   = $event->getIsNew();
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $row, $isNew] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $row     = $event->getItem();
+      $isNew   = $event->getIsNew();
+    }
 
 		// We only want to handle joomgallery images here.
 		if($context === 'com_joomgallery.image' || $context === 'com_joomgallery.image.quick' || $context === 'com_joomgallery.image.batch')
@@ -312,11 +340,20 @@ final class JoomImage extends Adapter implements SubscriberInterface
    * @since   2.5
    * @throws  \Exception on database error.
    */
-  public function onFinderBeforeSave(FinderEvent\BeforeSaveEvent $event): void
+  public function onFinderBeforeSave($event): void
   {
-    $context = $event->getContext();
-    $row     = $event->getItem();
-    $isNew   = $event->getIsNew();
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $row, $isNew] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $row     = $event->getItem();
+      $isNew   = $event->getIsNew();
+    }
 
 		// We only want to handle joomgallery images here.
 		if($context === 'com_joomgallery.image' || $context === 'com_joomgallery.image.quick' || $context === 'com_joomgallery.image.batch')
@@ -356,11 +393,20 @@ final class JoomImage extends Adapter implements SubscriberInterface
    *
    * @since   2.5
    */
-  public function onFinderChangeState(FinderEvent\AfterChangeStateEvent $event): void
+  public function onFinderChangeState($event): void
   {
-    $context = $event->getContext();
-    $pks     = $event->getPks();
-    $value   = $event->getValue();
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$context, $pks, $value] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+      $context = $event->getContext();
+      $pks     = $event->getPks();
+      $value   = $event->getValue();
+    }
 
 		$value = intval($value);
 
@@ -391,9 +437,20 @@ final class JoomImage extends Adapter implements SubscriberInterface
    *
    * @since   2.5
    */
-  public function onFinderCategoryChangeState(FinderEvent\AfterCategoryChangeStateEvent $event): void
+  public function onFinderCategoryChangeState($event): void
   {
-		$value = intval($event->getValue());
+    if(version_compare(JVERSION, '5.0.0', '<'))
+    {
+      // Joomla 4
+      [$value] = $event->getArguments();
+    }
+    else
+    {
+      // Joomla 5 or newer
+		  $value = $event->getValue();
+    }
+
+    $value = intval($value);
 
 		// We only want to handle joomgallery categories that get changed in the publishing state.
 		if($event->getExtension() === 'com_joomgallery.category' && $value >= 0)
@@ -451,6 +508,9 @@ final class JoomImage extends Adapter implements SubscriberInterface
 		//$item->publish_end_date = '0000-00-00 00:00:00';
     $item->publish_end_date = null;
 
+    // Initialize the item parameters.
+    $item->params = new Registry($item->params);
+
 		// Trigger the onContentPrepare event.
 		$item->summary = Helper::prepareContent($item->summary, $item->params, $item);
     $item->body = $item->summary;
@@ -458,7 +518,6 @@ final class JoomImage extends Adapter implements SubscriberInterface
 		// Build the necessary route and path information.
 		$item->url   = $this->getUrl($item->id, $this->extension, $this->layout);
     $item->route = JoomHelper::getViewRoute('image', $item->id, $item->catid, null, null, $item->language);
-		$item->path  = Helper::getContentPath($item->route);
 
     // Get the menu title if it exists.
     $title = $this->getItemMenuTitle($item->url);
@@ -477,6 +536,10 @@ final class JoomImage extends Adapter implements SubscriberInterface
 
     // Get taxonomies to display
     $taxonomies = $this->params->get('taxonomies', ['type', 'author', 'category', 'tags', 'language']);
+    if(!\is_array($taxonomies))
+    {
+      $taxonomies = \explode(',', $taxonomies);
+    }
 
 		// Add the type taxonomy data.
     if(\in_array('type', $taxonomies))
@@ -509,12 +572,12 @@ final class JoomImage extends Adapter implements SubscriberInterface
       // Add the tags taxonomy data. (multi-value taxonomy)
       if(\in_array('tags', $taxonomies))
       {
-        $item->addTaxonomy('Tags', $tag);
+        $item->addTaxonomy('Tag', $tag->title, $tag->published, $tag->access, $tag->language);
       }
     }
 
     // Put tags into a single text field for indexing
-    $item->tags = implode(' ', $tags);
+    $item->tags = implode(' ', \array_map(fn($tag) => $tag->title, $tags));
 
     // Title = strongest relevance
     $item->addInstruction(Indexer::TITLE_CONTEXT, 'title');
@@ -530,9 +593,10 @@ final class JoomImage extends Adapter implements SubscriberInterface
 
 		// Get content extras.
 		Helper::getContentExtras($item);
-    Helper::addCustomFields($item, 'com_joomgallery.image');
-
-		//dump($item, 'indexed joomgallery item');
+    if(version_compare(JVERSION, '5.0.0', '>='))
+    {
+      Helper::addCustomFields($item, 'com_joomgallery.image');
+    }
 
 		// Index the item.
 		$this->indexer->index($item);
@@ -557,7 +621,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
 			->select('a.published AS state, a.catid, a.date')
 			->select('a.hidden, a.featured, a.checked_out, a.approved, a.params, a.language')
 			->select('a.metakey, a.metadesc, a.access, a.ordering')
-			->select('c.name AS category, c.published AS cat_state')
+			->select('c.title AS category, c.published AS cat_state')
 			->select('u.name AS owner')
 			->from($this->table . ' AS a')
 			->join('LEFT', '#__joomgallery_categories AS c ON c.id = a.catid')
@@ -565,6 +629,23 @@ final class JoomImage extends Adapter implements SubscriberInterface
 
 		return $query;
 	}
+
+  /**
+   * Method to get the URL for the item. The URL is how we look up the link
+   * in the Finder index.
+   *
+   * @param   integer  $id         The id of the item.
+   * @param   string   $extension  The extension the category is in.
+   * @param   string   $view       The view for the URL.
+   *
+   * @return  string  The URL of the item.
+   *
+   * @since   2.5
+   */
+  protected function getUrl($id, $extension, $view)
+  {
+    return 'index.php?option=' . $extension . '&view=' . $view . '&id=' . $id;
+  }
 
 	/**
 	 * Method to get a SQL query to load the published and access states for
@@ -949,12 +1030,12 @@ final class JoomImage extends Adapter implements SubscriberInterface
   protected function getParentCatStates($item)
   {
     // get parent cats
-    $parent_cats = JoomHelper::getCategories($item, 'parents', true, false);
+    $parent_cats = JoomHelper::getCategories($item->catid, 'parents', true, false);
 
     $where_array = [];
     foreach ($parent_cats as $cat)
     {
-      array_push($where_array, 'id = ' . $cat->id);
+      array_push($where_array, 'id = ' . $cat['id']);
     }
 
     $db = $this->getDatabase();
@@ -1009,7 +1090,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
     $where_array = [];
     foreach($parent_cats as $cat)
     {
-      array_push($where_array, 'id = ' . $cat->id);
+      array_push($where_array, 'id = ' . $cat['id']);
     }
 
     $db = $this->getDatabase();
@@ -1045,7 +1126,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
   {
     $db = $this->getDatabase();
     $query = $db->getQuery(true)
-      ->select('t.title')
+      ->select('t.title, t.access, t.published, t.language')
       ->from($db->quoteName('#__joomgallery_tags', 't'))
       ->join('INNER', $db->quoteName('#__joomgallery_tags_ref', 'ref') . ' ON ' . $db->quoteName('ref.tagid') . ' = ' . $db->quoteName('t.id'))
       ->where($db->quoteName('ref.imgid') . ' = ' . (int) $imgId)
@@ -1053,6 +1134,6 @@ final class JoomImage extends Adapter implements SubscriberInterface
 
     $db->setQuery($query);
 
-    return $db->loadColumn() ?: [];
+    return $db->loadObjectList() ?: [];
   }
 }
