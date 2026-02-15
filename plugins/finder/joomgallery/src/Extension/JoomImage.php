@@ -517,7 +517,6 @@ final class JoomImage extends Adapter implements SubscriberInterface
 
     // Trigger the onContentPrepare event.
     $item->summary = Helper::prepareContent($item->summary, $item->params, $item);
-    $item->body    = $item->summary;
 
     // Build the necessary route and path information.
     $item->url   = $this->getUrl($item->id, $this->extension, $this->layout);
@@ -531,6 +530,10 @@ final class JoomImage extends Adapter implements SubscriberInterface
     {
       $item->title = $title;
     }
+
+    // Add the image.
+    $item->imageUrl = JoomHelper::getImg($item->id, 'thumbnail', true);
+    $item->imageAlt = $item->alias;
 
     // Translate the state.
     $this->tmp   = $item;
