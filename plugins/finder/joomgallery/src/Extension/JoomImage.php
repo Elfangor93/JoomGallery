@@ -58,7 +58,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
    * @var    string
    * @since  4.4.0
    */
-  protected $layout = 'image';
+  protected $layout = 'joomimage';
 
   /**
    * The type of content that the adapter indexes.
@@ -581,7 +581,7 @@ final class JoomImage extends Adapter implements SubscriberInterface
       // Add the tags taxonomy data. (multi-value taxonomy)
       if(\in_array('tags', $taxonomies))
       {
-        $item->addTaxonomy('Tag', $tag->title, $tag->published, $tag->access, $tag->language);
+        $item->addTaxonomy('Tags', $tag->title, $tag->published, $tag->access, $tag->language);
       }
     }
 
