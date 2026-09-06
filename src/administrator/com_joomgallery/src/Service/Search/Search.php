@@ -111,6 +111,21 @@ class Search implements SearchInterface
   }
 
   /**
+   * Return the filter-form fields that should be displayed for this provider.
+   *
+   * @return  array<string, array|null>
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getDisplayFields(): array
+  {
+    return [
+      'filter' => null,
+      'list'   => null,
+    ];
+  }
+
+  /**
    * Add the state to the service.
    *
    * @param   Registry  $state   The state object
@@ -162,6 +177,20 @@ class Search implements SearchInterface
   public function handlesOrdering(): bool
   {
     return $this->ordering;
+  }
+
+  /**
+   * Apply provider-specific ordering to the final list query.
+   *
+   * @param   QueryInterface  $query  The final list query
+   *
+   * @return  bool  True when provider ordering was applied.
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function applyOrderingToQuery(QueryInterface $query): bool
+  {
+    return false;
   }
 
   /**

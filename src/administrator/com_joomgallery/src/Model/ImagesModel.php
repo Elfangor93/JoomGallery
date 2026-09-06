@@ -198,6 +198,51 @@ class ImagesModel extends JoomListModel
   }
 
   /**
+   * Get the filter form adapted to the selected search provider.
+   *
+   * @param   array    $data      Data used to bind the form
+   * @param   boolean  $loadData  True to load the model state into the form
+   *
+   * @return  \Joomla\CMS\Form\Form|null
+   *
+   * @since   __DEPLOY_VERSION__
+   */
+  public function getFilterForm($data = [], $loadData = true)
+  {
+    $form = parent::getFilterForm($data, $loadData);
+
+    if($form === null)
+    {
+      return null;
+    }
+
+    $displayFields = $this->getSearchProvider()->getDisplayFields();
+
+    foreach(['filter', 'list'] as $group)
+    {
+      $visibleFields = $displayFields[$group] ?? null;
+
+      // A null allowlist means that the provider does not restrict this group.
+      if($visibleFields === null)
+      {
+        continue;
+      }
+
+      foreach($form->getGroup($group) as $field)
+      {
+        $fieldName = (string) $field->fieldname;
+
+        if(!\in_array($fieldName, $visibleFields, true))
+        {
+          $form->removeField($fieldName, $group);
+        }
+      }
+    }
+
+    return $form;
+  }
+
+  /**
    * Build an SQL query to load the list data.
    *
    * ToDo: Manuel
@@ -335,15 +380,8 @@ class ImagesModel extends JoomListModel
     // Filter by search
     $search = trim((string) $this->getState('filter.search'));
 
-    $hasActiveSearchProviderFilter =
-      !empty($this->getState('filter.category'))
-      || !empty($this->getState('filter.tag'))
-      || !empty($this->getState('filter.language'));
-
-    if(!empty($search) || $hasActiveSearchProviderFilter)
-    {
-      $this->component->getSearch()->applyToQuery($query, $search, 'a');
-    }
+    // Let the provider decide whether the current search/filter state is active.
+    $searchProvider->applyToQuery($query, $search, 'a');
 
     // Filter by published state
     $published = (string) $this->getState('filter.published');
@@ -546,8 +584,8 @@ class ImagesModel extends JoomListModel
         ->bind(':endDate', $endDate);
     }
 
-    // Add the list ordering clause.
-    if(!$searchProvider->handlesOrdering())
+    // Give provider-specific result ordering precedence over list ordering.
+    if(!$searchProvider->applyOrderingToQuery($query))
     {
       $orderCol  = $this->getState('list.ordering', 'a.id');
       $orderDirn = $this->getState('list.direction', 'ASC');
