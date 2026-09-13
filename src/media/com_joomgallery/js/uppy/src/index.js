@@ -6,6 +6,17 @@ import Tus from '@uppy/tus';
 import jgProcessor from './jgprocessor.js';
 
 /**
+ * Read the numeric category ID from a modal input or the selected dropdown option.
+ *
+ * @returns {String} Selected category ID, or an empty string if no field exists.
+ */
+function getSelectedCatid() {
+  const field = document.getElementById('jform_catid_id')
+    || document.getElementById('jform_catid');
+  return field ? field.value : '';
+}
+
+/**
  * Apply validity class to catid choices select field
  * 
  * @param   {Boolean}   ini      True to remove all validity classes
@@ -24,7 +35,7 @@ function catidFieldValidity (ini = false) {
     return false;
   }
 
-  if(catid.checkValidity() && catid.value != '') {
+  if(catid.checkValidity() && /^[1-9][0-9]*$/.test(getSelectedCatid())) {
     // is-valid
     catid.classList.remove('is-invalid');
     catid.classList.add('is-valid');
@@ -128,7 +139,7 @@ var callback = function() {
       catidFieldValidity();
       window.scrollTo(0, 0);
 
-      const catid = document.getElementById('jform_catid_id').value;
+      const catid = getSelectedCatid();
       const id = form.querySelector('[name="jform[id]"]');
       uppy.setMeta({ catid, imageid: id ? id.value : '0' });
       return true;
