@@ -128,7 +128,7 @@ var callback = function() {
       catidFieldValidity();
       window.scrollTo(0, 0);
 
-      const catid = document.getElementById('jform_catid').value;
+      const catid = document.getElementById('jform_catid_id').value;
       const id = form.querySelector('[name="jform[id]"]');
       uppy.setMeta({ catid, imageid: id ? id.value : '0' });
       return true;
