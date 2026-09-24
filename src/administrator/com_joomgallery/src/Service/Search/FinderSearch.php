@@ -38,6 +38,14 @@ class FinderSearch extends Search implements SearchInterface
   protected $name = 'finder';
 
   /**
+   * The name to be displayed.
+   *
+   * @var    string
+   * @since  4.5.0
+   */
+  protected $displayName = 'COM_JOOMGALLERY_SERVICE_SEARCH_PROVIDER_FINDER_TITLE';
+
+  /**
    * The filters this search service applies.
    *
    * @var   array
@@ -65,6 +73,7 @@ class FinderSearch extends Search implements SearchInterface
         'language',
       ],
       'list' => [
+        'fullordering',
         'limit',
       ],
     ];

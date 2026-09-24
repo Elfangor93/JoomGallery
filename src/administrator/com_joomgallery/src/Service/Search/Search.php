@@ -16,6 +16,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Service\Search;
 
 use Joomgallery\Component\Joomgallery\Administrator\Extension\ServiceTrait;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\QueryInterface;
@@ -37,6 +38,14 @@ class Search implements SearchInterface
    * @since  4.4.0
    */
   protected $name = '';
+
+  /**
+   * The name to be displayed.
+   *
+   * @var    string
+   * @since  4.5.0
+   */
+  protected $displayName = '';
 
   /**
    * The filters this search service applies.
@@ -96,6 +105,18 @@ class Search implements SearchInterface
   public function getName(): string
   {
     return $this->name;
+  }
+
+  /**
+   * Returns the display name of the search.
+   *
+   * @return  string
+   *
+   * @since   4.5.0
+   */
+  public function getDisplayName(): string
+  {
+    return Text::_($this->displayName);
   }
 
   /**

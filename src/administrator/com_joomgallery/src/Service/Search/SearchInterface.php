@@ -43,13 +43,22 @@ interface SearchInterface
   public function getFilters(): array;
 
   /**
+   * Returns the display name of the search.
+   *
+   * @return  string
+   *
+   * @since   4.5.0
+   */
+  public function getDisplayName(): string;
+
+  /**
    * Return the filter-form fields that should be displayed for this provider.
    *
    * A null fieldset value means that all its fields should be displayed.
    *
    * @return  array<string, array|null>
    *
-   * @since   __DEPLOY_VERSION__
+   * @since   4.5.0
    */
   public function getDisplayFields(): array;
 

@@ -17,6 +17,7 @@ namespace Joomgallery\Component\Joomgallery\Administrator\Model;
 use Joomgallery\Component\Joomgallery\Administrator\Model\JoomListModel;
 use Joomgallery\Component\Joomgallery\Administrator\Service\Search\SearchInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Database\ParameterType;
 use Joomla\Utilities\ArrayHelper;
 
@@ -216,7 +217,14 @@ class ImagesModel extends JoomListModel
       return null;
     }
 
-    $displayFields = $this->getSearchProvider()->getDisplayFields();
+    $searchProvider = $this->getSearchProvider();
+    $displayFields  = $searchProvider->getDisplayFields();
+
+    if($searchProvider->handlesOrdering())
+    {
+      $form->removeField('fullordering', 'list');
+      $this->app->enqueueMessage(Text::sprintf('COM_JOOMGALLERY_SEARCH_PROVIDER_ORDERING_NOTICE', $searchProvider->getDisplayName()), 'info');
+    }
 
     foreach(['filter', 'list'] as $group)
     {
