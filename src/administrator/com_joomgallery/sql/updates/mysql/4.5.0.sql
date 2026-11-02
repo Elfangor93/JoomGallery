@@ -15,7 +15,7 @@ ALTER TABLE `#__joomgallery_configs` ADD `jg_category_view_show_tags_label` TINY
 ALTER TABLE `#__joomgallery_configs` DROP COLUMN `jg_maxuploadfields`;
 UPDATE `#__joomgallery_configs` SET `jg_pathftpupload` = "images/joomgallery/FTP/" WHERE `jg_pathftpupload` = "administrator/components/com_joomgallery/temp/ftp_upload/";
 ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user` VARCHAR(10) NOT NULL DEFAULT 'all';
-ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user_groups` VARCHAR(2048) NOT NULL DEFAULT '',
+ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user_groups` VARCHAR(2048) NOT NULL DEFAULT '';
 ALTER TABLE `#__joomgallery_configs` ADD `jg_create_user_ids` VARCHAR(2048) NOT NULL DEFAULT '';
 
 -- Do not silently merge existing profiles: duplicate cmsuser values must be resolved before upgrading.
